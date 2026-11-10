@@ -50,7 +50,7 @@
         .content-area {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 80px; /* Space for bottom nav */
+            padding-bottom: 140px; /* Increased space to prevent overlap with bottom nav */
         }
 
         .surface {
@@ -617,12 +617,13 @@
 
         const taskIndex = tasks.findIndex(t => t.id === id);
         const newTask = {
-            id, title, type, date, days, completedDates: []
+            id, title, type, date, days, completedDates: [], failedDates: []
         };
 
         if (taskIndex > -1) {
             // keep completion history
             newTask.completedDates = tasks[taskIndex].completedDates;
+            newTask.failedDates = tasks[taskIndex].failedDates || [];
             tasks[taskIndex] = newTask;
             showToast('Tarefa atualizada!');
         } else {
@@ -644,7 +645,8 @@
             type: 'once',
             date: today,
             days: [],
-            completedDates: []
+            completedDates: [],
+            failedDates: []
         };
         tasks.push(newTask);
         saveData();
@@ -691,32 +693,33 @@
     }
 
     function deleteTask(id) {
-        if(confirm('Tem certeza que deseja excluir esta tarefa?')) {
-            tasks = tasks.filter(t => t.id !== id);
-            saveData();
-            renderAllTasks();
-            renderTodayTasks();
-            showToast('Tarefa excluída');
-        }
+        tasks = tasks.filter(t => t.id !== id);
+        saveData();
+        renderAllTasks();
+        renderTodayTasks();
+        showToast('Tarefa excluída');
     }
 
-    function toggleTaskCompletion(id, checkbox) {
+    function markTaskStatus(id, status) {
         const today = getTodayStr();
         const task = tasks.find(t => t.id === id);
         if(!task) return;
 
-        const isChecked = checkbox.checked;
-        if(isChecked) {
+        if (!task.failedDates) task.failedDates = [];
+
+        if (status === 'completed') {
             if(!task.completedDates.includes(today)) {
                 task.completedDates.push(today);
-                addProgress(); // Adds energy/progress
+                addProgress(); 
             }
-        } else {
-            task.completedDates = task.completedDates.filter(d => d !== today);
+        } else if (status === 'failed') {
+            if(!task.failedDates.includes(today)) {
+                task.failedDates.push(today);
+            }
         }
         
         saveData();
-        renderTodayTasks(); // Re-render to strike-through text
+        renderTodayTasks(); 
     }
 
     // --- RENDERING ---
@@ -740,18 +743,31 @@
             if (isTaskForToday(task)) {
                 todayTasksCount++;
                 const isCompleted = task.completedDates.includes(todayStr);
+                const isFailed = task.failedDates && task.failedDates.includes(todayStr);
+                const isAnswered = isCompleted || isFailed;
                 
                 const card = document.createElement('div');
-                card.className = `task-card p-4 rounded-xl flex items-center gap-4 ${isCompleted ? 'task-completed' : ''}`;
+                card.className = `task-card p-4 rounded-xl flex flex-col gap-3 ${isCompleted ? 'task-completed opacity-70' : ''} ${isFailed ? 'opacity-70' : ''}`;
                 
                 card.innerHTML = `
-                    <input type="checkbox" class="task-checkbox" ${isCompleted ? 'checked' : ''} onchange="toggleTaskCompletion('${task.id}', this)">
                     <div class="flex-1">
-                        <h4 class="task-title font-medium">${task.title}</h4>
+                        <h4 class="task-title font-medium ${isFailed ? 'text-red-500 line-through' : ''}">${task.title}</h4>
                         <span class="text-xs text-primary bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-md mt-1 inline-block">
                             ${task.type === 'once' ? 'Hoje' : 'Rotina'}
                         </span>
                     </div>
+                    ${!isAnswered ? `
+                    <div class="flex gap-2 w-full mt-2">
+                        <button onclick="markTaskStatus('${task.id}', 'failed')" class="flex-1 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-semibold transition active:scale-95">Não Concluída</button>
+                        <button onclick="markTaskStatus('${task.id}', 'completed')" class="flex-1 py-2 btn-primary rounded-lg text-sm font-semibold transition active:scale-95">Concluída</button>
+                    </div>
+                    ` : `
+                    <div class="w-full text-right mt-1">
+                        <span class="text-xs font-bold ${isCompleted ? 'text-green-500' : 'text-red-500'}">
+                            <i class="fas ${isCompleted ? 'fa-check' : 'fa-times'}"></i> ${isCompleted ? 'Concluída' : 'Não Concluída'}
+                        </span>
+                    </div>
+                    `}
                 `;
                 list.appendChild(card);
             }
@@ -811,10 +827,8 @@
     }
 
     function resetData() {
-        if(confirm('Isso apagará todas as tarefas e progresso. Tem certeza?')) {
-            localStorage.clear();
-            location.reload();
-        }
+        localStorage.clear();
+        location.reload();
     }
 
     // Run on load
