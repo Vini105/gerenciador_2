@@ -75,40 +75,40 @@
         .modal-overlay.active { display: flex; }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 h-[100dvh] flex flex-col overflow-hidden">
+<body class="bg-slate-100 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300 h-[100dvh] flex flex-col overflow-hidden">
 
     <!-- Container Principal com scroll e o pb-40 obrigatório -->
-    <main class="flex-1 overflow-y-auto relative w-full max-w-md mx-auto bg-white dark:bg-gray-800 shadow-xl border-x border-gray-200 dark:border-gray-700 px-4 pt-4 pb-40">
+    <main class="flex-1 overflow-y-auto relative w-full max-w-md mx-auto bg-white dark:bg-slate-900 shadow-xl border-x border-slate-200 dark:border-slate-800 px-4 pt-4 pb-40">
         
         <!-- ================= ABA HOJE ================= -->
         <div id="tab-hoje" class="tab-content active">
             <header class="mb-6 pt-2">
-                <h1 class="text-3xl font-bold">Meu Dia</h1>
-                <p id="date-display" class="text-gray-500 dark:text-gray-400 text-sm mt-1"></p>
+                <h1 class="text-3xl font-bold text-slate-900 dark:text-white">Meu Dia</h1>
+                <p id="date-display" class="text-slate-500 dark:text-slate-400 text-sm mt-1"></p>
             </header>
 
             <!-- Monitoramento de Frequência -->
             <section class="mb-8">
                 <div class="flex justify-between items-end mb-3">
-                    <h2 class="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Monitoramento</h2>
+                    <h2 class="text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Monitoramento</h2>
                 </div>
                 
                 <div id="tracked-squares" class="flex justify-between gap-2">
                     <!-- Quadrados renderizados via JS -->
                 </div>
-                <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3 px-2">
-                    Nível de Consistência: <span class="text-red-500 font-bold">Baixo (1)</span>, <span class="text-yellow-500 font-bold">Médio (2)</span>, <span class="text-green-500 font-bold">Alto (3)</span>.
+                <p class="text-xs text-center text-slate-500 dark:text-slate-400 mt-3 px-2">
+                    Nível: <span class="text-red-500 font-bold">1</span>, <span class="text-yellow-500 font-bold">2</span>, <span class="text-green-500 font-bold">3</span>.
                 </p>
             </section>
 
             <!-- Lista de Tarefas de Hoje -->
             <section>
-                <h2 class="text-xl font-bold mb-4">Tarefas de Hoje</h2>
+                <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Tarefas de Hoje</h2>
                 <div id="today-tasks-list" class="space-y-3">
                     <!-- Tarefas geradas via JS -->
                 </div>
                 
-                <div id="empty-state" class="hidden flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
+                <div id="empty-state" class="hidden flex-col items-center justify-center py-12 text-slate-400 dark:text-slate-500">
                     <i class="fas fa-mug-hot text-5xl mb-4 opacity-50"></i>
                     <p class="text-center font-medium">Tudo limpo por aqui hoje!</p>
                 </div>
@@ -117,7 +117,7 @@
 
         <!-- ================= ABA CADASTRAR ================= -->
         <div id="tab-cadastrar" class="tab-content">
-            <h1 class="text-3xl font-bold mb-6 pt-2">Gerenciar</h1>
+            <h1 class="text-3xl font-bold mb-6 pt-2 text-slate-900 dark:text-white">Gerenciar</h1>
 
             <!-- Botão Atividade Extra Rápida -->
             <button onclick="addExtraTask()" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 p-4 rounded-xl font-bold flex items-center justify-center gap-2 mb-8 shadow-sm transition active:scale-95">
@@ -125,28 +125,28 @@
             </button>
 
             <!-- Formulário -->
-            <div class="bg-gray-50 dark:bg-gray-750 border border-gray-200 dark:border-gray-700 p-5 rounded-2xl mb-8 shadow-sm">
-                <h2 id="form-title" class="text-lg font-bold mb-5 border-b border-gray-200 dark:border-gray-700 pb-2">Nova Tarefa</h2>
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl mb-8 shadow-sm">
+                <h2 id="form-title" class="text-lg font-bold mb-5 border-b border-slate-200 dark:border-slate-700 pb-2 text-slate-900 dark:text-white">Nova Tarefa</h2>
                 
                 <input type="hidden" id="task-id">
                 
                 <div class="mb-5">
-                    <label class="block text-sm font-medium mb-1">Nome da Tarefa</label>
-                    <input type="text" id="task-title" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white outline-none focus:border-blue-500 transition" placeholder="Ex: Ler 10 páginas">
+                    <label class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Nome da Tarefa</label>
+                    <input type="text" id="task-title" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg p-3 text-slate-900 dark:text-white outline-none focus:border-blue-500 transition" placeholder="Ex: Ler 10 páginas">
                 </div>
 
                 <div class="mb-5">
-                    <label class="block text-sm font-medium mb-2">Tipo de Agendamento</label>
-                    <div class="flex gap-4 p-1 bg-gray-200 dark:bg-gray-800 rounded-lg">
+                    <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Tipo de Agendamento</label>
+                    <div class="flex gap-4 p-1 bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="task-type" value="once" checked class="peer sr-only" onchange="toggleTaskType()">
-                            <div class="text-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-gray-600 peer-checked:shadow-sm font-medium text-sm text-gray-500 peer-checked:text-gray-900 dark:peer-checked:text-white transition">
+                            <div class="text-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:shadow-sm font-medium text-sm text-slate-500 peer-checked:text-slate-900 dark:peer-checked:text-white transition">
                                 Data Única
                             </div>
                         </label>
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="task-type" value="repeat" class="peer sr-only" onchange="toggleTaskType()">
-                            <div class="text-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-gray-600 peer-checked:shadow-sm font-medium text-sm text-gray-500 peer-checked:text-gray-900 dark:peer-checked:text-white transition">
+                            <div class="text-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-slate-700 peer-checked:shadow-sm font-medium text-sm text-slate-500 peer-checked:text-slate-900 dark:peer-checked:text-white transition">
                                 Repetir
                             </div>
                         </label>
@@ -155,53 +155,53 @@
 
                 <!-- Data Única -->
                 <div id="date-picker-container" class="mb-6">
-                    <label class="block text-sm font-medium mb-1">Data</label>
-                    <input type="date" id="task-date" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white outline-none focus:border-blue-500">
+                    <label class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Data</label>
+                    <input type="date" id="task-date" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg p-3 text-slate-900 dark:text-white outline-none focus:border-blue-500 [color-scheme:light] dark:[color-scheme:dark]">
                 </div>
 
                 <!-- Repetição -->
                 <div id="days-picker-container" class="mb-6 hidden">
-                    <label class="block text-sm font-medium mb-2">Dias da Semana</label>
+                    <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Dias da Semana</label>
                     <div class="flex justify-between gap-1">
-                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="0"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">D</div></label>
-                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="1"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">S</div></label>
-                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="2"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">T</div></label>
-                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="3"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">Q</div></label>
-                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="4"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">Q</div></label>
-                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="5"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">S</div></label>
-                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="6"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">S</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="0"><div class="aspect-square rounded-lg border border-slate-300 dark:border-slate-600 flex items-center justify-center font-bold text-sm bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition">D</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="1"><div class="aspect-square rounded-lg border border-slate-300 dark:border-slate-600 flex items-center justify-center font-bold text-sm bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition">S</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="2"><div class="aspect-square rounded-lg border border-slate-300 dark:border-slate-600 flex items-center justify-center font-bold text-sm bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition">T</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="3"><div class="aspect-square rounded-lg border border-slate-300 dark:border-slate-600 flex items-center justify-center font-bold text-sm bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition">Q</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="4"><div class="aspect-square rounded-lg border border-slate-300 dark:border-slate-600 flex items-center justify-center font-bold text-sm bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition">Q</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="5"><div class="aspect-square rounded-lg border border-slate-300 dark:border-slate-600 flex items-center justify-center font-bold text-sm bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition">S</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="6"><div class="aspect-square rounded-lg border border-slate-300 dark:border-slate-600 flex items-center justify-center font-bold text-sm bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 transition">S</div></label>
                     </div>
                 </div>
 
                 <div class="flex gap-2">
                     <button onclick="saveTask()" class="flex-1 bg-blue-600 text-white p-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition active:scale-95">Salvar Tarefa</button>
-                    <button id="cancel-edit-btn" onclick="resetForm()" class="hidden bg-gray-400 dark:bg-gray-600 text-white px-4 py-3 rounded-lg font-bold shadow-md hover:bg-gray-500 transition active:scale-95"><i class="fas fa-times"></i></button>
+                    <button id="cancel-edit-btn" onclick="resetForm()" class="hidden bg-slate-400 dark:bg-slate-600 text-white px-4 py-3 rounded-lg font-bold shadow-md hover:bg-slate-500 transition active:scale-95"><i class="fas fa-times"></i></button>
                 </div>
             </div>
 
             <!-- Lista de Todas as Tarefas -->
-            <h2 class="text-xl font-bold mb-4">Todas as Tarefas</h2>
+            <h2 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Todas as Tarefas</h2>
             <div id="all-tasks-list" class="space-y-3"></div>
         </div>
 
         <!-- ================= ABA AJUSTES ================= -->
         <div id="tab-ajustes" class="tab-content">
-            <h1 class="text-3xl font-bold mb-8 pt-2">Ajustes</h1>
+            <h1 class="text-3xl font-bold mb-8 pt-2 text-slate-900 dark:text-white">Ajustes</h1>
 
-            <div class="bg-gray-50 dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden mb-6 shadow-sm">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden mb-6 shadow-sm">
                 <!-- Tema -->
-                <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700" onclick="toggleTheme()" style="cursor:pointer">
+                <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700" onclick="toggleTheme()" style="cursor:pointer">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300">
                             <i id="theme-icon-indicator" class="fas fa-moon"></i>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-gray-900 dark:text-white">Tema Visual</h3>
-                            <p class="text-xs text-gray-500">Alternar entre Claro e Escuro</p>
+                            <h3 class="font-semibold text-slate-900 dark:text-white">Tema Visual</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Alternar entre Claro e Escuro</p>
                         </div>
                     </div>
-                    <button class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-xl transition active:scale-90 pointer-events-none">
-                        <i id="theme-icon-btn" class="fas fa-moon text-gray-700 dark:text-yellow-400"></i>
+                    <button class="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xl transition active:scale-90 pointer-events-none border border-transparent dark:border-slate-600">
+                        <i id="theme-icon-btn" class="fas fa-moon text-slate-700 dark:text-yellow-400"></i>
                     </button>
                 </div>
 
@@ -213,26 +213,26 @@
                         </div>
                         <div>
                             <h3 class="font-semibold text-red-600 dark:text-red-400">Apagar Dados</h3>
-                            <p class="text-xs text-gray-500">Reset total do aplicativo</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Reset total do aplicativo</p>
                         </div>
                     </div>
-                    <i class="fas fa-chevron-right text-gray-400 text-sm"></i>
+                    <i class="fas fa-chevron-right text-slate-400 dark:text-slate-500 text-sm"></i>
                 </div>
             </div>
         </div>
     </main>
 
     <!-- Barra de Navegação Inferior -->
-    <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 z-50 px-6 pt-3 pb-6 flex justify-between items-center rounded-t-2xl shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
+    <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 z-50 px-6 pt-3 pb-6 flex justify-between items-center rounded-t-2xl shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.2)]">
         <button onclick="switchTab('hoje', this)" class="nav-btn text-blue-600 flex flex-col items-center gap-1 min-w-[60px] transition transform hover:scale-105">
             <i class="fas fa-calendar-day text-2xl mb-1"></i>
             <span class="text-[10px] font-bold">Hoje</span>
         </button>
-        <button onclick="switchTab('cadastrar', this)" class="nav-btn text-gray-400 dark:text-gray-500 flex flex-col items-center gap-1 min-w-[60px] transition transform hover:scale-105">
+        <button onclick="switchTab('cadastrar', this)" class="nav-btn text-slate-400 dark:text-slate-500 flex flex-col items-center gap-1 min-w-[60px] transition transform hover:scale-105">
             <i class="fas fa-plus-square text-2xl mb-1"></i>
             <span class="text-[10px] font-bold">Cadastrar</span>
         </button>
-        <button onclick="switchTab('ajustes', this)" class="nav-btn text-gray-400 dark:text-gray-500 flex flex-col items-center gap-1 min-w-[60px] transition transform hover:scale-105">
+        <button onclick="switchTab('ajustes', this)" class="nav-btn text-slate-400 dark:text-slate-500 flex flex-col items-center gap-1 min-w-[60px] transition transform hover:scale-105">
             <i class="fas fa-cog text-2xl mb-1"></i>
             <span class="text-[10px] font-bold">Ajustes</span>
         </button>
@@ -241,26 +241,26 @@
     <!-- Modals (Custom Alerts/Confirms) -->
     <!-- Modal: Adicionar Monitoramento -->
     <div id="modal-add-track" class="modal-overlay fixed inset-0 items-center justify-center">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative">
-            <h3 class="text-xl font-bold mb-4">Monitorar Tarefa</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Escolha uma tarefa para ocupar este slot de monitoramento:</p>
-            <div id="track-task-list" class="max-h-60 overflow-y-auto space-y-2 mb-4 border border-gray-200 dark:border-gray-700 rounded-xl p-2">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative border border-slate-200 dark:border-slate-700">
+            <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Monitorar Tarefa</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Escolha uma tarefa para ocupar este slot de monitoramento:</p>
+            <div id="track-task-list" class="max-h-60 overflow-y-auto space-y-2 mb-4 border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900">
                 <!-- Preenchido via JS -->
             </div>
             <input type="hidden" id="pending-slot-index">
-            <button onclick="closeModals()" class="w-full py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
+            <button onclick="closeModals()" class="w-full py-3 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
         </div>
     </div>
 
     <!-- Modal: Remover Monitoramento -->
     <div id="modal-remove-track" class="modal-overlay fixed inset-0 items-center justify-center">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative text-center">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative text-center border border-slate-200 dark:border-slate-700">
             <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fas fa-unlink"></i></div>
-            <h3 class="text-xl font-bold mb-2">Parar de Monitorar?</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Esta tarefa não será mais monitorada aqui, mas seu histórico não será apagado das tarefas gerais.</p>
+            <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Parar de Monitorar?</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Esta tarefa não será mais monitorada aqui, mas seu histórico não será apagado das tarefas gerais.</p>
             <input type="hidden" id="remove-slot-index">
             <div class="flex gap-3">
-                <button onclick="closeModals()" class="flex-1 py-3 bg-gray-200 dark:bg-gray-700 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
+                <button onclick="closeModals()" class="flex-1 py-3 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
                 <button onclick="confirmRemoveTrack()" class="flex-1 py-3 bg-red-500 text-white rounded-xl font-bold active:scale-95 transition">Parar</button>
             </div>
         </div>
@@ -268,30 +268,24 @@
 
     <!-- Modal: Reset Data -->
     <div id="modal-reset" class="modal-overlay fixed inset-0 items-center justify-center">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative text-center border border-red-500">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative text-center border border-red-500 dark:border-red-800">
             <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fas fa-exclamation-triangle"></i></div>
             <h3 class="text-xl font-bold text-red-600 dark:text-red-400 mb-2">Apagar Todos os Dados?</h3>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Isso removerá <b>todas</b> as suas tarefas e o progresso. Esta ação não pode ser desfeita.</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Isso removerá <b>todas</b> as suas tarefas e o progresso. Esta ação não pode ser desfeita.</p>
             <div class="flex gap-3">
-                <button onclick="closeModals()" class="flex-1 py-3 bg-gray-200 dark:bg-gray-700 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
+                <button onclick="closeModals()" class="flex-1 py-3 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
                 <button onclick="executeReset()" class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold active:scale-95 transition">Sim, Apagar</button>
             </div>
         </div>
     </div>
 
     <!-- Toast Component -->
-    <div id="toast" class="bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-6 py-3 rounded-full font-medium shadow-lg flex items-center gap-2">
+    <div id="toast" class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-6 py-3 rounded-full font-medium shadow-lg flex items-center gap-2">
         <i class="fas fa-info-circle"></i> <span id="toast-msg">Mensagem</span>
     </div>
 
     <script>
         /* ================= ESTADO DA APLICAÇÃO ================= */
-        // Estrutura EXATAMENTE como solicitado:
-        // tasks: array de objetos { id, title, type, date, days }
-        // completions: { taskId: { 'YYYY-MM-DD': 'done' | 'failed' } }
-        // trackedTasks: array fixo 5 slots [{ id, level, lastCheck } | null, ...]
-        // theme: 'light' ou 'dark'
-        
         let state = {
             tasks: JSON.parse(localStorage.getItem('tasks')) || [],
             completions: JSON.parse(localStorage.getItem('completions')) || {},
@@ -336,8 +330,6 @@
             if (task.type === 'once') {
                 return task.date === targetDateStr;
             } else if (task.type === 'repeat') {
-                // Instanciar data localmente para pegar o dia da semana correto
-                // 'T00:00:00' previne problemas de fuso horário movendo pro dia anterior
                 let targetDate = new Date(targetDateStr + 'T00:00:00');
                 let dayOfWeek = targetDate.getDay();
                 return task.days.includes(dayOfWeek);
@@ -352,9 +344,8 @@
             let hasDecayed = false;
 
             state.trackedTasks.forEach((slot, index) => {
-                if (!slot) return; // Vazio
+                if (!slot) return; 
 
-                // Verifica se a tarefa ainda existe, senão limpa o slot
                 const taskExists = state.tasks.find(t => t.id === slot.id);
                 if (!taskExists) {
                     state.trackedTasks[index] = null;
@@ -369,34 +360,29 @@
 
                 if (slot.lastCheck !== todayStr) {
                     let checkDateObj = new Date(slot.lastCheck + 'T00:00:00');
-                    checkDateObj.setDate(checkDateObj.getDate() + 1); // começa do dia seguinte ao ultimo check
+                    checkDateObj.setDate(checkDateObj.getDate() + 1); 
 
-                    // Itera até ONTEM
                     while (checkDateObj < todayDateObj) {
                         let checkDateStr = dateToLocalStr(checkDateObj);
                         
-                        // A tarefa estava agendada para este dia que passou?
                         if (isScheduledForDateStr(taskExists, checkDateStr)) {
-                            // O usuário cumpriu?
                             const status = state.completions[slot.id] ? state.completions[slot.id][checkDateStr] : undefined;
                             
                             if (status !== 'done') {
-                                // Se falhou ou ignorou, penaliza
                                 slot.level = Math.max(1, slot.level - 1);
                                 hasDecayed = true;
                             }
                         }
                         checkDateObj.setDate(checkDateObj.getDate() + 1);
                     }
-                    slot.lastCheck = todayStr; // Atualiza para hoje
+                    slot.lastCheck = todayStr; 
                 }
             });
 
             if (hasDecayed) {
                 saveState();
-                showToast("Nível de energia atualizado (penalidade aplicada por dias perdidos).");
+                showToast("Nível de energia atualizado (penalidade aplicada).");
             } else if (state.trackedTasks.some(s => s && s.lastCheck !== todayStr)) {
-                // Atualizar último check para hoje sem penalidades, pra não processar de novo
                 state.trackedTasks.forEach(s => { if(s) s.lastCheck = todayStr; });
                 saveState();
             }
@@ -406,20 +392,18 @@
         function markTask(taskId, status) {
             const todayStr = getLocalTodayStr();
             
-            // Registra em completions
             if (!state.completions[taskId]) {
                 state.completions[taskId] = {};
             }
             state.completions[taskId][todayStr] = status;
 
-            // Se for monitorada, ajusta o nível
             const slotIndex = state.trackedTasks.findIndex(slot => slot && slot.id === taskId);
             if (slotIndex !== -1) {
                 let slot = state.trackedTasks[slotIndex];
                 if (status === 'done') {
-                    slot.level = Math.min(3, slot.level + 1); // sobe até máx 3
+                    slot.level = Math.min(3, slot.level + 1);
                 } else if (status === 'failed') {
-                    slot.level = Math.max(1, slot.level - 1); // desce até min 1
+                    slot.level = Math.max(1, slot.level - 1);
                 }
             }
 
@@ -470,7 +454,7 @@
 
             saveState();
             resetForm();
-            renderTracker(); // caso o nome mude
+            renderTracker();
             renderTodayTasks();
             renderAllTasks();
         }
@@ -489,7 +473,7 @@
             
             state.tasks.push(taskData);
             saveState();
-            showToast('Atividade Extra adicionada pro dia atual!');
+            showToast('Atividade Extra adicionada!');
             switchTab('hoje', document.querySelector('.nav-btn'));
         }
 
@@ -518,20 +502,15 @@
         }
 
         function deleteTask(taskId) {
-            // Remove the task
             state.tasks = state.tasks.filter(t => t.id !== taskId);
-            
-            // Remove from completions logic
             delete state.completions[taskId];
-            
-            // Remove from tracked array if present
             state.trackedTasks = state.trackedTasks.map(slot => (slot && slot.id === taskId) ? null : slot);
 
             saveState();
             renderTracker();
             renderTodayTasks();
             renderAllTasks();
-            showToast('Tarefa excluída do sistema');
+            showToast('Tarefa excluída');
         }
 
         /* ================= TRACKER E MODALS ================= */
@@ -547,8 +526,8 @@
                     let title = task ? task.title : '??';
                     let initials = title.substring(0, 2).toUpperCase();
                     
-                    let bgClass = 'bg-red-500'; // level 1
-                    if (slot.level === 2) bgClass = 'bg-yellow-400 text-gray-900'; 
+                    let bgClass = 'bg-red-500';
+                    if (slot.level === 2) bgClass = 'bg-yellow-400 text-slate-900'; 
                     else if (slot.level === 3) bgClass = 'bg-green-500';
 
                     if(slot.level !== 2) bgClass += ' text-white';
@@ -557,7 +536,7 @@
                     div.innerText = initials;
                     div.onclick = () => openRemoveTrackModal(index);
                 } else {
-                    div.className = `w-[18%] aspect-square rounded-2xl flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-400 border-2 border-dashed border-gray-300 dark:border-gray-600 opacity-60 transition-transform active:scale-95 cursor-pointer`;
+                    div.className = `w-[18%] aspect-square rounded-2xl flex items-center justify-center bg-slate-200 dark:bg-slate-800 text-slate-400 border-2 border-dashed border-slate-300 dark:border-slate-700 opacity-80 transition-transform active:scale-95 cursor-pointer`;
                     div.innerHTML = '<i class="fas fa-plus text-sm opacity-50"></i>';
                     div.onclick = () => openAddTrackModal(index);
                 }
@@ -570,17 +549,16 @@
             const list = document.getElementById('track-task-list');
             list.innerHTML = '';
             
-            // Filtrar tarefas que não estão sendo monitoradas no momento
             const currentlyTrackedIds = state.trackedTasks.filter(s => s !== null).map(s => s.id);
             const availableTasks = state.tasks.filter(t => !currentlyTrackedIds.includes(t.id));
 
             if(availableTasks.length === 0) {
-                list.innerHTML = `<p class="text-sm text-center py-4 text-gray-500">Nenhuma tarefa disponível. Crie uma nova primeiro.</p>`;
+                list.innerHTML = `<p class="text-sm text-center py-4 text-slate-500">Nenhuma tarefa disponível.</p>`;
             } else {
                 availableTasks.forEach(t => {
                     const btn = document.createElement('button');
-                    btn.className = "w-full text-left p-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition border border-transparent";
-                    btn.innerHTML = `<div class="font-bold text-sm">${t.title}</div><div class="text-xs text-gray-500">${t.type === 'once' ? 'Única' : 'Rotina'}</div>`;
+                    btn.className = "w-full text-left p-3 rounded-lg bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition border border-slate-200 dark:border-slate-700 shadow-sm";
+                    btn.innerHTML = `<div class="font-bold text-sm">${t.title}</div><div class="text-xs text-slate-500">${t.type === 'once' ? 'Única' : 'Rotina'}</div>`;
                     btn.onclick = () => confirmAddTrack(t.id, slotIndex);
                     list.appendChild(btn);
                 });
@@ -592,14 +570,14 @@
         function confirmAddTrack(taskId, slotIndex) {
             state.trackedTasks[slotIndex] = {
                 id: taskId,
-                level: 1, // Começa no Nível 1
+                level: 1, 
                 lastCheck: getLocalTodayStr()
             };
             saveState();
             renderTracker();
             renderTodayTasks();
             closeModals();
-            showToast('Tarefa em monitoramento!');
+            showToast('Monitoramento ativo!');
         }
 
         function openRemoveTrackModal(slotIndex) {
@@ -637,13 +615,13 @@
                     const isTracked = state.trackedTasks.some(slot => slot && slot.id === task.id);
                     
                     const el = document.createElement('div');
-                    el.className = `bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl shadow-sm ${status ? 'opacity-70' : ''}`;
+                    el.className = `bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl shadow-sm ${status ? 'opacity-70' : ''}`;
                     
                     let statusHtml = '';
                     if (!status) {
                         statusHtml = `
                         <div class="flex gap-2 mt-4">
-                            <button onclick="markTask('${task.id}', 'failed')" class="flex-1 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg text-sm font-bold active:scale-95 transition">Não Concluída</button>
+                            <button onclick="markTask('${task.id}', 'failed')" class="flex-1 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50 rounded-lg text-sm font-bold active:scale-95 transition">Não Concluída</button>
                             <button onclick="markTask('${task.id}', 'done')" class="flex-1 py-3 bg-green-500 text-white rounded-lg text-sm font-bold active:scale-95 transition shadow-sm hover:bg-green-600">Concluída</button>
                         </div>`;
                     } else {
@@ -651,21 +629,20 @@
                         const icon = isDone ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500';
                         const text = isDone ? 'Finalizada' : 'Falhou';
                         const textColor = isDone ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
-                        const lineThroughClass = isDone ? 'line-through text-gray-500' : 'text-gray-900 dark:text-white';
+                        const lineThroughClass = isDone ? 'line-through text-slate-500' : 'text-slate-900 dark:text-white';
                         
                         statusHtml = `
-                        <div class="w-full text-right mt-2 bg-gray-50 dark:bg-gray-750 rounded p-2 text-center border border-gray-100 dark:border-gray-700">
+                        <div class="w-full text-right mt-2 bg-slate-50 dark:bg-slate-900/50 rounded p-2 text-center border border-slate-100 dark:border-slate-700">
                             <span class="text-sm font-bold ${textColor}">
                                 <i class="fas ${icon} mr-1"></i> ${text}
                             </span>
                         </div>`;
 
-                        // Hack pra aplicar line-through na hora que renderiza os botões como done
                         setTimeout(() => {
-                            const tHeader = el.querySelector('h4');
+                            const tHeader = el.querySelector('h4 span');
                             if(tHeader && isDone) {
-                                tHeader.classList.add('line-through', 'text-gray-400');
-                                tHeader.classList.remove('text-gray-900', 'dark:text-white');
+                                tHeader.classList.add('line-through', 'text-slate-400', 'dark:text-slate-500');
+                                tHeader.classList.remove('text-slate-900', 'dark:text-white');
                             }
                         }, 0);
                     }
@@ -674,10 +651,10 @@
 
                     el.innerHTML = `
                         <div>
-                            <h4 class="font-bold text-lg text-gray-900 dark:text-white transition-colors duration-300 flex items-center gap-1">
+                            <h4 class="font-bold text-lg text-slate-900 dark:text-white transition-colors duration-300 flex items-center gap-1">
                                 <span>${task.title}</span> ${trackBadge}
                             </h4>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-1">${task.type === 'once' ? 'Atividade Hoje' : 'Rotina'}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-1">${task.type === 'once' ? 'Atividade Hoje' : 'Rotina'}</p>
                         </div>
                         ${statusHtml}
                     `;
@@ -699,7 +676,7 @@
             list.innerHTML = '';
 
             if (state.tasks.length === 0) {
-                list.innerHTML = `<div class="text-center py-8 text-gray-400 border border-dashed border-gray-300 dark:border-gray-700 rounded-xl">Nenhuma tarefa salva.</div>`;
+                list.innerHTML = `<div class="text-center py-8 text-slate-400 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">Nenhuma tarefa salva.</div>`;
                 return;
             }
 
@@ -709,19 +686,19 @@
                     `Repete: ${task.days.map(d => daysOfWeek[d]).join(', ')}`;
 
                 const el = document.createElement('div');
-                el.className = 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl shadow-sm flex items-center justify-between';
+                el.className = 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl shadow-sm flex items-center justify-between';
                 el.innerHTML = `
                     <div>
-                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center">${task.title}</h4>
+                        <h4 class="font-bold text-slate-900 dark:text-white flex items-center">${task.title}</h4>
                         <div class="flex items-center mt-1">
-                            <p class="text-xs text-gray-500 dark:text-gray-400">${subtitle}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">${subtitle}</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="editTask('${task.id}')" class="w-10 h-10 rounded-full bg-blue-50 dark:bg-gray-700 text-blue-600 flex items-center justify-center active:scale-90 transition">
+                        <button onclick="editTask('${task.id}')" class="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-700 text-blue-600 flex items-center justify-center active:scale-90 transition">
                             <i class="fas fa-pen text-sm"></i>
                         </button>
-                        <button onclick="deleteTask('${task.id}')" class="w-10 h-10 rounded-full bg-red-50 dark:bg-gray-700 text-red-600 flex items-center justify-center active:scale-90 transition">
+                        <button onclick="deleteTask('${task.id}')" class="w-10 h-10 rounded-full bg-red-50 dark:bg-slate-700 text-red-600 flex items-center justify-center active:scale-90 transition">
                             <i class="fas fa-trash text-sm"></i>
                         </button>
                     </div>
@@ -737,12 +714,12 @@
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('text-blue-600', 'dark:text-blue-400');
-                btn.classList.add('text-gray-400', 'dark:text-gray-500');
+                btn.classList.add('text-slate-400', 'dark:text-slate-500');
                 if(btn.querySelector('i')) btn.querySelector('i').classList.remove('text-blue-600');
             });
 
             btnElement.classList.add('text-blue-600');
-            btnElement.classList.remove('text-gray-400', 'dark:text-gray-500');
+            btnElement.classList.remove('text-slate-400', 'dark:text-slate-500');
             
             if(tabId === 'hoje') { renderTracker(); renderTodayTasks(); }
             if(tabId === 'cadastrar') renderAllTasks();
@@ -785,14 +762,14 @@
             if (theme === 'dark') {
                 root.classList.add('dark');
                 indicators.forEach(i => {
-                    i.classList.remove('fa-moon', 'text-gray-700');
+                    i.classList.remove('fa-moon', 'text-slate-700');
                     i.classList.add('fa-sun', 'text-yellow-400');
                 });
             } else {
                 root.classList.remove('dark');
                 indicators.forEach(i => {
                     i.classList.remove('fa-sun', 'text-yellow-400');
-                    i.classList.add('fa-moon', 'text-gray-700');
+                    i.classList.add('fa-moon', 'text-slate-700');
                 });
             }
         }
@@ -811,7 +788,6 @@
             localStorage.removeItem('tasks');
             localStorage.removeItem('completions');
             localStorage.removeItem('trackedTasks');
-            // Mantendo o tema
             location.reload();
         }
 
