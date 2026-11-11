@@ -5,834 +5,825 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TaskFlow</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-        :root {
-            --primary: #3b82f6; /* Blue by default */
-            --primary-light: #60a5fa;
-            --primary-dark: #2563eb;
-            --bg-color: #f3f4f6;
-            --surface-color: #ffffff;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --border-color: #e5e7eb;
-        }
-
-        html.dark {
-            --bg-color: #111827;
-            --surface-color: #1f2937;
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --border-color: #374151;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            transition: background-color 0.3s, color 0.3s;
-            margin: 0;
-            padding: 0;
-            overscroll-behavior-y: none;
             -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
         }
 
-        /* Safe area for mobile */
-        .app-container {
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
+        /* Ocultar barra de rolagem mas manter funcionalidade */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
         }
 
-        .content-area {
-            flex: 1;
-            overflow-y: auto;
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
         }
 
-        .surface {
-            background-color: var(--surface-color);
-            border-color: var(--border-color);
+        .tab-content.active {
+            display: block;
         }
 
-        .text-primary { color: var(--primary); }
-        .bg-primary { background-color: var(--primary); }
-        .border-primary { border-color: var(--primary); }
-        
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            transition: opacity 0.2s;
-        }
-        .btn-primary:active { opacity: 0.8; }
-
-        /* Bottom Nav */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: var(--surface-color);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
-            z-index: 50;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            width: 33%;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-item i {
-            font-size: 1.25rem;
-            margin-bottom: 4px;
-            transition: transform 0.2s;
-        }
-
-        .nav-item.active i {
-            transform: scale(1.1);
-        }
-
-        /* Custom Checkbox */
-        .task-checkbox {
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border: 2px solid var(--text-muted);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .task-checkbox:checked {
-            background-color: var(--primary);
-            border-color: var(--primary);
-        }
-        .task-checkbox:checked::after {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            color: white;
-            font-size: 12px;
-        }
-
-        .task-card {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            transition: transform 0.1s, opacity 0.3s;
-        }
-        .task-card:active {
-            transform: scale(0.98);
-        }
-
-        .task-completed .task-title {
-            text-decoration: line-through;
-            color: var(--text-muted);
-        }
-
-        /* Progress Bars */
-        .progress-container {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 8px;
-            height: 100px;
-            padding: 20px;
-            background-color: var(--surface-color);
-            border-radius: 16px;
-            margin-bottom: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .progress-bar {
-            width: 20%;
-            background-color: var(--border-color);
-            border-radius: 6px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: flex-end;
-        }
-
-        .progress-bar-fill {
-            width: 100%;
-            background-color: var(--primary);
-            transition: height 0.5s ease-out;
-            box-shadow: 0 0 10px var(--primary-light);
-        }
-
-        /* Toast */
+        /* Toast de notificação */
         #toast {
             position: fixed;
             top: -100px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: var(--surface-color);
-            color: var(--text-main);
-            border: 1px solid var(--primary);
-            padding: 12px 24px;
-            border-radius: 999px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: top 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: top 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 100;
-            font-weight: 500;
         }
-
-        .show-toast {
-            top: 20px !important;
-        }
-
-        /* Weekday selector */
-        .day-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--bg-color);
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-        }
-        .day-btn.selected {
-            background-color: var(--primary);
+        .show-toast { top: 20px !important; }
+        
+        /* Checkbox customizado pros dias da semana */
+        .day-checkbox:checked + div {
+            background-color: #3b82f6;
             color: white;
-            border-color: var(--primary);
+            border-color: #3b82f6;
         }
 
-        /* Input styling */
-        .custom-input {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
+        /* Modals Overlay */
+        .modal-overlay {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+            z-index: 200;
         }
-        .custom-input:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
-
+        .modal-overlay.active { display: flex; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 h-[100dvh] flex flex-col overflow-hidden">
 
-<div class="app-container">
-    
-    <!-- Tab 1: Hoje -->
-    <div id="tab-hoje" class="content-area px-4 pt-4 pb-40 block">
-        <div class="flex justify-between items-center mb-6 mt-2">
-            <div>
-                <h1 class="text-2xl font-bold">Meu Dia</h1>
-                <p class="text-sm" style="color: var(--text-muted);" id="current-date-display">Carregando data...</p>
-            </div>
-            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-lg">
-                <i class="fas fa-bolt"></i>
-            </div>
-        </div>
-
-        <!-- Progress Bars -->
-        <div class="mb-2">
-            <div class="flex justify-between items-end px-1 mb-1">
-                <span class="text-xs font-semibold" style="color: var(--text-muted);">Energia / Streak</span>
-                <span class="text-xs font-bold text-primary" id="progress-text">50%</span>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar h-full"><div class="progress-bar-fill" id="bar-1" style="height: 0%;"></div></div>
-                <div class="progress-bar h-full"><div class="progress-bar-fill" id="bar-2" style="height: 0%;"></div></div>
-                <div class="progress-bar h-full"><div class="progress-bar-fill" id="bar-3" style="height: 0%;"></div></div>
-                <div class="progress-bar h-full"><div class="progress-bar-fill" id="bar-4" style="height: 0%;"></div></div>
-                <div class="progress-bar h-full"><div class="progress-bar-fill" id="bar-5" style="height: 0%;"></div></div>
-            </div>
-            <p class="text-xs text-center mb-6" style="color: var(--text-muted);">Conclua tarefas para encher. Cuidado para não zerar se ficar 1 dia inativo!</p>
-        </div>
-
-        <h2 class="text-lg font-semibold mb-3">Tarefas de Hoje</h2>
-        <div id="today-tasks-list" class="space-y-3">
-            <!-- Tarefas injetadas via JS -->
-        </div>
+    <!-- Container Principal com scroll e o pb-40 obrigatório -->
+    <main class="flex-1 overflow-y-auto relative w-full max-w-md mx-auto bg-white dark:bg-gray-800 shadow-xl border-x border-gray-200 dark:border-gray-700 px-4 pt-4 pb-40">
         
-        <div id="empty-state" class="hidden flex-col items-center justify-center py-10 opacity-50">
-            <i class="fas fa-clipboard-check text-4xl mb-3"></i>
-            <p>Nenhuma tarefa pendente hoje!</p>
-        </div>
-    </div>
+        <!-- ================= ABA HOJE ================= -->
+        <div id="tab-hoje" class="tab-content active">
+            <header class="mb-6 pt-2">
+                <h1 class="text-3xl font-bold">Meu Dia</h1>
+                <p id="date-display" class="text-gray-500 dark:text-gray-400 text-sm mt-1"></p>
+            </header>
 
-    <!-- Tab 2: Cadastrar -->
-    <div id="tab-cadastrar" class="content-area px-4 pt-4 pb-40 hidden">
-        <h1 class="text-2xl font-bold mt-2 mb-6">Gerenciar Tarefas</h1>
-
-        <div class="surface p-4 rounded-xl shadow-sm mb-6">
-            <h2 class="text-lg font-semibold mb-4" id="form-title">Nova Tarefa</h2>
-            <input type="hidden" id="task-id">
-            
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-1" style="color: var(--text-muted);">O que precisa ser feito?</label>
-                <input type="text" id="task-title" class="custom-input w-full p-3 rounded-lg" placeholder="Ex: Academia, Estudar JS...">
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-sm font-medium mb-2" style="color: var(--text-muted);">Tipo de Tarefa</label>
-                <div class="flex gap-4">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="task-type" value="once" checked class="accent-blue-500 w-4 h-4" onchange="toggleTaskType()">
-                        <span>Data Única</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="task-type" value="repeat" class="accent-blue-500 w-4 h-4" onchange="toggleTaskType()">
-                        <span>Repetir (Semanal)</span>
-                    </label>
+            <!-- Monitoramento de Frequência -->
+            <section class="mb-8">
+                <div class="flex justify-between items-end mb-3">
+                    <h2 class="text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Monitoramento</h2>
                 </div>
-            </div>
-
-            <div id="date-picker-container" class="mb-4">
-                <label class="block text-sm font-medium mb-1" style="color: var(--text-muted);">Data</label>
-                <input type="date" id="task-date" class="custom-input w-full p-3 rounded-lg">
-            </div>
-
-            <div id="days-picker-container" class="mb-4 hidden">
-                <label class="block text-sm font-medium mb-2" style="color: var(--text-muted);">Dias da Semana</label>
-                <div class="flex justify-between gap-1">
-                    <div class="day-btn" data-day="0" onclick="toggleDay(this)">D</div>
-                    <div class="day-btn" data-day="1" onclick="toggleDay(this)">S</div>
-                    <div class="day-btn" data-day="2" onclick="toggleDay(this)">T</div>
-                    <div class="day-btn" data-day="3" onclick="toggleDay(this)">Q</div>
-                    <div class="day-btn" data-day="4" onclick="toggleDay(this)">Q</div>
-                    <div class="day-btn" data-day="5" onclick="toggleDay(this)">S</div>
-                    <div class="day-btn" data-day="6" onclick="toggleDay(this)">S</div>
-                </div>
-            </div>
-
-            <div class="flex gap-2">
-                <button onclick="saveTask()" class="btn-primary flex-1 p-3 rounded-lg font-bold shadow-md">
-                    Salvar Tarefa
-                </button>
-                <button onclick="cancelEdit()" id="cancel-btn" class="hidden bg-gray-500 text-white p-3 rounded-lg font-bold shadow-md">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-
-        <button onclick="addExtraTask()" class="w-full surface border border-primary text-primary p-4 rounded-xl font-bold flex items-center justify-center gap-2 mb-8 shadow-sm transition active:scale-95">
-            <i class="fas fa-plus-circle"></i> Adicionar Atividade Extra Hoje
-        </button>
-
-        <h2 class="text-lg font-semibold mb-3">Todas as Tarefas</h2>
-        <div id="all-tasks-list" class="space-y-3 mb-4">
-            <!-- Todas as tarefas injetadas via JS -->
-        </div>
-    </div>
-
-    <!-- Tab 3: Configurações -->
-    <div id="tab-config" class="content-area px-4 pt-4 pb-40 hidden">
-        <h1 class="text-2xl font-bold mt-2 mb-6">Configurações</h1>
-
-        <div class="surface p-4 rounded-xl mb-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h3 class="font-semibold">Tema do App</h3>
-                    <p class="text-xs" style="color: var(--text-muted);">Alternar entre claro e escuro</p>
-                </div>
-                <button onclick="toggleTheme()" class="w-12 h-12 rounded-full surface border flex items-center justify-center text-xl transition active:scale-90" style="border-color: var(--border-color);">
-                    <i id="theme-icon" class="fas fa-moon"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="surface p-4 rounded-xl mb-4">
-            <h3 class="font-semibold mb-1">Cor Principal</h3>
-            <p class="text-xs mb-4" style="color: var(--text-muted);">Escolha a cor de destaque do aplicativo</p>
-            
-            <div class="flex justify-between gap-2">
-                <button onclick="setColor('blue')" class="w-10 h-10 rounded-full bg-blue-500 shadow-md transform transition hover:scale-110 active:scale-90 ring-2 ring-transparent ring-offset-2 ring-offset-gray-900" id="color-blue"></button>
-                <button onclick="setColor('green')" class="w-10 h-10 rounded-full bg-green-500 shadow-md transform transition hover:scale-110 active:scale-90 ring-2 ring-transparent ring-offset-2 ring-offset-gray-900" id="color-green"></button>
-                <button onclick="setColor('purple')" class="w-10 h-10 rounded-full bg-purple-500 shadow-md transform transition hover:scale-110 active:scale-90 ring-2 ring-transparent ring-offset-2 ring-offset-gray-900" id="color-purple"></button>
-                <button onclick="setColor('red')" class="w-10 h-10 rounded-full bg-red-500 shadow-md transform transition hover:scale-110 active:scale-90 ring-2 ring-transparent ring-offset-2 ring-offset-gray-900" id="color-red"></button>
-                <button onclick="setColor('orange')" class="w-10 h-10 rounded-full bg-orange-500 shadow-md transform transition hover:scale-110 active:scale-90 ring-2 ring-transparent ring-offset-2 ring-offset-gray-900" id="color-orange"></button>
-            </div>
-        </div>
-        
-        <div class="mt-8 text-center opacity-50 text-sm">
-            <p>TaskFlow v1.0.0</p>
-            <button onclick="resetData()" class="mt-4 text-red-500 underline text-xs">Resetar todos os dados</button>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('hoje', this)">
-            <i class="fas fa-calendar-day"></i>
-            <span>Hoje</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('cadastrar', this)">
-            <i class="fas fa-plus-square"></i>
-            <span>Cadastrar</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('config', this)">
-            <i class="fas fa-cog"></i>
-            <span>Ajustes</span>
-        </div>
-    </nav>
-</div>
-
-<div id="toast">Mensagem</div>
-
-<script>
-    // --- STATE MANAGEMENT ---
-    let tasks = JSON.parse(localStorage.getItem('taskflow_tasks')) || [];
-    let progress = parseInt(localStorage.getItem('taskflow_progress')) || 50; // 0 to 100
-    let lastActionDate = localStorage.getItem('taskflow_lastActionDate') || getTodayStr();
-    let lastDecayCheck = localStorage.getItem('taskflow_lastDecayCheck') || getTodayStr();
-    let settings = JSON.parse(localStorage.getItem('taskflow_settings')) || { theme: 'dark', color: 'blue' };
-
-    const colors = {
-        blue: { primary: '#3b82f6', light: '#60a5fa', dark: '#2563eb' },
-        green: { primary: '#10b981', light: '#34d399', dark: '#059669' },
-        purple: { primary: '#8b5cf6', light: '#a78bfa', dark: '#6d28d9' },
-        red: { primary: '#ef4444', light: '#f87171', dark: '#dc2626' },
-        orange: { primary: '#f97316', light: '#fb923c', dark: '#ea580c' }
-    };
-
-    const daysOfWeekStr = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-
-    // --- INITIALIZATION ---
-    function init() {
-        applySettings();
-        checkProgressDecay();
-        updateDateDisplay();
-        
-        // Form init
-        document.getElementById('task-date').value = getTodayStr();
-        
-        renderTodayTasks();
-        renderAllTasks();
-        updateProgressBar();
-    }
-
-    // --- UTILS ---
-    function getTodayStr() {
-        const d = new Date();
-        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-        return d.toISOString().split('T')[0];
-    }
-    
-    function getDayOfWeek() {
-        return new Date().getDay(); // 0 (Sun) to 6 (Sat)
-    }
-
-    function generateId() {
-        return Math.random().toString(36).substr(2, 9);
-    }
-
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.innerText = msg;
-        toast.classList.add('show-toast');
-        setTimeout(() => toast.classList.remove('show-toast'), 3000);
-    }
-
-    function saveData() {
-        localStorage.setItem('taskflow_tasks', JSON.stringify(tasks));
-        localStorage.setItem('taskflow_progress', progress.toString());
-        localStorage.setItem('taskflow_lastActionDate', lastActionDate);
-        localStorage.setItem('taskflow_lastDecayCheck', lastDecayCheck);
-        localStorage.setItem('taskflow_settings', JSON.stringify(settings));
-    }
-
-    // --- NAVIGATION ---
-    function switchTab(tabId, el) {
-        // Hide all
-        document.getElementById('tab-hoje').classList.add('hidden');
-        document.getElementById('tab-cadastrar').classList.add('hidden');
-        document.getElementById('tab-config').classList.add('hidden');
-        
-        // Remove active class from all nav items
-        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-        
-        // Show selected
-        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-        el.classList.add('active');
-
-        if(tabId === 'hoje') renderTodayTasks();
-        if(tabId === 'cadastrar') renderAllTasks();
-    }
-
-    // --- SETTINGS & THEME ---
-    function applySettings() {
-        // Theme
-        if (settings.theme === 'dark') {
-            document.documentElement.classList.add('dark');
-            document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
-        } else {
-            document.documentElement.classList.remove('dark');
-            document.getElementById('theme-icon').classList.replace('fa-sun', 'fa-moon');
-        }
-
-        // Color
-        setColor(settings.color, false);
-    }
-
-    function toggleTheme() {
-        settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
-        applySettings();
-        saveData();
-    }
-
-    function setColor(colorName, showMsg = true) {
-        settings.color = colorName;
-        const root = document.documentElement;
-        const c = colors[colorName];
-        
-        root.style.setProperty('--primary', c.primary);
-        root.style.setProperty('--primary-light', c.light);
-        root.style.setProperty('--primary-dark', c.dark);
-
-        // Update ring outlines in settings
-        document.querySelectorAll('[id^="color-"]').forEach(btn => btn.classList.remove('ring-gray-400', 'ring-white'));
-        const activeRing = settings.theme === 'dark' ? 'ring-white' : 'ring-gray-400';
-        document.getElementById(`color-${colorName}`).classList.add(activeRing);
-
-        saveData();
-        if (showMsg) showToast("Cor atualizada!");
-    }
-
-    // --- PROGRESS LOGIC ---
-    function checkProgressDecay() {
-        const today = getTodayStr();
-        if (lastDecayCheck !== today) {
-            // Check diff from last action
-            const actionDate = new Date(lastActionDate);
-            const todayDate = new Date(today);
-            const diffTime = Math.abs(todayDate - actionDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-
-            if (diffDays > 1) {
-                // Lose 20% for every day missed beyond 1
-                const penalty = (diffDays - 1) * 20;
-                progress = Math.max(0, progress - penalty);
-                showToast(`Você perdeu ${penalty}% de energia por inatividade.`);
                 
-                // Update action date so we don't penalize repeatedly for same gap if opened multiple times today
-                // Actually, just updating lastDecayCheck handles the "once per day" check.
-                // But to prevent compound decay incorrectly tomorrow, we should sync action date or handle mathematically.
-                // Simplest: just accept the penalty, and set actionDate to today - 1 so it decays linearly tomorrow if still inactive.
-                let newActionDate = new Date(todayDate);
-                newActionDate.setDate(newActionDate.getDate() - 1);
-                lastActionDate = newActionDate.toISOString().split('T')[0];
-            }
-            
-            lastDecayCheck = today;
-            saveData();
-        }
-    }
+                <div id="tracked-squares" class="flex justify-between gap-2">
+                    <!-- Quadrados renderizados via JS -->
+                </div>
+                <p class="text-xs text-center text-gray-500 dark:text-gray-400 mt-3 px-2">
+                    Nível de Consistência: <span class="text-red-500 font-bold">Baixo (1)</span>, <span class="text-yellow-500 font-bold">Médio (2)</span>, <span class="text-green-500 font-bold">Alto (3)</span>.
+                </p>
+            </section>
 
-    function addProgress() {
-        progress = Math.min(100, progress + 15);
-        lastActionDate = getTodayStr();
-        saveData();
-        updateProgressBar();
-    }
+            <!-- Lista de Tarefas de Hoje -->
+            <section>
+                <h2 class="text-xl font-bold mb-4">Tarefas de Hoje</h2>
+                <div id="today-tasks-list" class="space-y-3">
+                    <!-- Tarefas geradas via JS -->
+                </div>
+                
+                <div id="empty-state" class="hidden flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-500">
+                    <i class="fas fa-mug-hot text-5xl mb-4 opacity-50"></i>
+                    <p class="text-center font-medium">Tudo limpo por aqui hoje!</p>
+                </div>
+            </section>
+        </div>
 
-    function updateProgressBar() {
-        document.getElementById('progress-text').innerText = `${progress}%`;
+        <!-- ================= ABA CADASTRAR ================= -->
+        <div id="tab-cadastrar" class="tab-content">
+            <h1 class="text-3xl font-bold mb-6 pt-2">Gerenciar</h1>
+
+            <!-- Botão Atividade Extra Rápida -->
+            <button onclick="addExtraTask()" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 p-4 rounded-xl font-bold flex items-center justify-center gap-2 mb-8 shadow-sm transition active:scale-95">
+                <i class="fas fa-bolt text-lg"></i> Adicionar Atividade Extra Hoje
+            </button>
+
+            <!-- Formulário -->
+            <div class="bg-gray-50 dark:bg-gray-750 border border-gray-200 dark:border-gray-700 p-5 rounded-2xl mb-8 shadow-sm">
+                <h2 id="form-title" class="text-lg font-bold mb-5 border-b border-gray-200 dark:border-gray-700 pb-2">Nova Tarefa</h2>
+                
+                <input type="hidden" id="task-id">
+                
+                <div class="mb-5">
+                    <label class="block text-sm font-medium mb-1">Nome da Tarefa</label>
+                    <input type="text" id="task-title" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white outline-none focus:border-blue-500 transition" placeholder="Ex: Ler 10 páginas">
+                </div>
+
+                <div class="mb-5">
+                    <label class="block text-sm font-medium mb-2">Tipo de Agendamento</label>
+                    <div class="flex gap-4 p-1 bg-gray-200 dark:bg-gray-800 rounded-lg">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="task-type" value="once" checked class="peer sr-only" onchange="toggleTaskType()">
+                            <div class="text-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-gray-600 peer-checked:shadow-sm font-medium text-sm text-gray-500 peer-checked:text-gray-900 dark:peer-checked:text-white transition">
+                                Data Única
+                            </div>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="task-type" value="repeat" class="peer sr-only" onchange="toggleTaskType()">
+                            <div class="text-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-gray-600 peer-checked:shadow-sm font-medium text-sm text-gray-500 peer-checked:text-gray-900 dark:peer-checked:text-white transition">
+                                Repetir
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Data Única -->
+                <div id="date-picker-container" class="mb-6">
+                    <label class="block text-sm font-medium mb-1">Data</label>
+                    <input type="date" id="task-date" class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white outline-none focus:border-blue-500">
+                </div>
+
+                <!-- Repetição -->
+                <div id="days-picker-container" class="mb-6 hidden">
+                    <label class="block text-sm font-medium mb-2">Dias da Semana</label>
+                    <div class="flex justify-between gap-1">
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="0"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">D</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="1"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">S</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="2"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">T</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="3"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">Q</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="4"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">Q</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="5"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">S</div></label>
+                        <label class="relative cursor-pointer flex-1"><input type="checkbox" class="day-checkbox sr-only" value="6"><div class="aspect-square rounded-lg border border-gray-300 dark:border-gray-600 flex items-center justify-center font-bold text-sm bg-white dark:bg-gray-800 transition">S</div></label>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="saveTask()" class="flex-1 bg-blue-600 text-white p-3 rounded-lg font-bold shadow-md hover:bg-blue-700 transition active:scale-95">Salvar Tarefa</button>
+                    <button id="cancel-edit-btn" onclick="resetForm()" class="hidden bg-gray-400 dark:bg-gray-600 text-white px-4 py-3 rounded-lg font-bold shadow-md hover:bg-gray-500 transition active:scale-95"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+
+            <!-- Lista de Todas as Tarefas -->
+            <h2 class="text-xl font-bold mb-4">Todas as Tarefas</h2>
+            <div id="all-tasks-list" class="space-y-3"></div>
+        </div>
+
+        <!-- ================= ABA AJUSTES ================= -->
+        <div id="tab-ajustes" class="tab-content">
+            <h1 class="text-3xl font-bold mb-8 pt-2">Ajustes</h1>
+
+            <div class="bg-gray-50 dark:bg-gray-750 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden mb-6 shadow-sm">
+                <!-- Tema -->
+                <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700" onclick="toggleTheme()" style="cursor:pointer">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                            <i id="theme-icon-indicator" class="fas fa-moon"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-gray-900 dark:text-white">Tema Visual</h3>
+                            <p class="text-xs text-gray-500">Alternar entre Claro e Escuro</p>
+                        </div>
+                    </div>
+                    <button class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-xl transition active:scale-90 pointer-events-none">
+                        <i id="theme-icon-btn" class="fas fa-moon text-gray-700 dark:text-yellow-400"></i>
+                    </button>
+                </div>
+
+                <!-- Reset -->
+                <div class="flex items-center justify-between p-4" onclick="openResetModal()" style="cursor:pointer">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+                            <i class="fas fa-trash-alt"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-red-600 dark:text-red-400">Apagar Dados</h3>
+                            <p class="text-xs text-gray-500">Reset total do aplicativo</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-400 text-sm"></i>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Barra de Navegação Inferior -->
+    <nav class="fixed bottom-0 w-full max-w-md left-1/2 -translate-x-1/2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 z-50 px-6 pt-3 pb-6 flex justify-between items-center rounded-t-2xl shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.1)]">
+        <button onclick="switchTab('hoje', this)" class="nav-btn text-blue-600 flex flex-col items-center gap-1 min-w-[60px] transition transform hover:scale-105">
+            <i class="fas fa-calendar-day text-2xl mb-1"></i>
+            <span class="text-[10px] font-bold">Hoje</span>
+        </button>
+        <button onclick="switchTab('cadastrar', this)" class="nav-btn text-gray-400 dark:text-gray-500 flex flex-col items-center gap-1 min-w-[60px] transition transform hover:scale-105">
+            <i class="fas fa-plus-square text-2xl mb-1"></i>
+            <span class="text-[10px] font-bold">Cadastrar</span>
+        </button>
+        <button onclick="switchTab('ajustes', this)" class="nav-btn text-gray-400 dark:text-gray-500 flex flex-col items-center gap-1 min-w-[60px] transition transform hover:scale-105">
+            <i class="fas fa-cog text-2xl mb-1"></i>
+            <span class="text-[10px] font-bold">Ajustes</span>
+        </button>
+    </nav>
+
+    <!-- Modals (Custom Alerts/Confirms) -->
+    <!-- Modal: Adicionar Monitoramento -->
+    <div id="modal-add-track" class="modal-overlay fixed inset-0 items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative">
+            <h3 class="text-xl font-bold mb-4">Monitorar Tarefa</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Escolha uma tarefa para ocupar este slot de monitoramento:</p>
+            <div id="track-task-list" class="max-h-60 overflow-y-auto space-y-2 mb-4 border border-gray-200 dark:border-gray-700 rounded-xl p-2">
+                <!-- Preenchido via JS -->
+            </div>
+            <input type="hidden" id="pending-slot-index">
+            <button onclick="closeModals()" class="w-full py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Modal: Remover Monitoramento -->
+    <div id="modal-remove-track" class="modal-overlay fixed inset-0 items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative text-center">
+            <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fas fa-unlink"></i></div>
+            <h3 class="text-xl font-bold mb-2">Parar de Monitorar?</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Esta tarefa não será mais monitorada aqui, mas seu histórico não será apagado das tarefas gerais.</p>
+            <input type="hidden" id="remove-slot-index">
+            <div class="flex gap-3">
+                <button onclick="closeModals()" class="flex-1 py-3 bg-gray-200 dark:bg-gray-700 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
+                <button onclick="confirmRemoveTrack()" class="flex-1 py-3 bg-red-500 text-white rounded-xl font-bold active:scale-95 transition">Parar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Reset Data -->
+    <div id="modal-reset" class="modal-overlay fixed inset-0 items-center justify-center">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative text-center border border-red-500">
+            <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fas fa-exclamation-triangle"></i></div>
+            <h3 class="text-xl font-bold text-red-600 dark:text-red-400 mb-2">Apagar Todos os Dados?</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Isso removerá <b>todas</b> as suas tarefas e o progresso. Esta ação não pode ser desfeita.</p>
+            <div class="flex gap-3">
+                <button onclick="closeModals()" class="flex-1 py-3 bg-gray-200 dark:bg-gray-700 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
+                <button onclick="executeReset()" class="flex-1 py-3 bg-red-600 text-white rounded-xl font-bold active:scale-95 transition">Sim, Apagar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Component -->
+    <div id="toast" class="bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-6 py-3 rounded-full font-medium shadow-lg flex items-center gap-2">
+        <i class="fas fa-info-circle"></i> <span id="toast-msg">Mensagem</span>
+    </div>
+
+    <script>
+        /* ================= ESTADO DA APLICAÇÃO ================= */
+        // Estrutura EXATAMENTE como solicitado:
+        // tasks: array de objetos { id, title, type, date, days }
+        // completions: { taskId: { 'YYYY-MM-DD': 'done' | 'failed' } }
+        // trackedTasks: array fixo 5 slots [{ id, level, lastCheck } | null, ...]
+        // theme: 'light' ou 'dark'
         
-        // 5 bars, each represents 20%
-        for(let i=1; i<=5; i++) {
-            const bar = document.getElementById(`bar-${i}`);
-            const thresholdLower = (i-1) * 20;
-            const thresholdUpper = i * 20;
+        let state = {
+            tasks: JSON.parse(localStorage.getItem('tasks')) || [],
+            completions: JSON.parse(localStorage.getItem('completions')) || {},
+            trackedTasks: JSON.parse(localStorage.getItem('trackedTasks')) || [null, null, null, null, null],
+            theme: localStorage.getItem('theme') || 'dark'
+        };
+
+        const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+        /* ================= INICIALIZAÇÃO ================= */
+        function init() {
+            applyTheme(state.theme);
+            document.getElementById('task-date').value = getLocalTodayStr();
+            updateDateHeader();
             
-            if (progress >= thresholdUpper) {
-                bar.style.height = '100%';
-            } else if (progress > thresholdLower) {
-                const remainder = progress - thresholdLower;
-                const percent = (remainder / 20) * 100;
-                bar.style.height = `${percent}%`;
-            } else {
-                bar.style.height = '0%';
+            runDecayLogic();
+
+            renderTracker();
+            renderTodayTasks();
+            renderAllTasks();
+        }
+
+        /* ================= UTILITÁRIOS DE DATA ================= */
+        function getLocalTodayStr() {
+            return dateToLocalStr(new Date());
+        }
+
+        function dateToLocalStr(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        function updateDateHeader() {
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            let str = new Date().toLocaleDateString('pt-BR', options);
+            document.getElementById('date-display').innerText = str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        function isScheduledForDateStr(task, targetDateStr) {
+            if (task.type === 'once') {
+                return task.date === targetDateStr;
+            } else if (task.type === 'repeat') {
+                // Instanciar data localmente para pegar o dia da semana correto
+                // 'T00:00:00' previne problemas de fuso horário movendo pro dia anterior
+                let targetDate = new Date(targetDateStr + 'T00:00:00');
+                let dayOfWeek = targetDate.getDay();
+                return task.days.includes(dayOfWeek);
             }
-        }
-    }
-
-    // --- TASK LOGIC ---
-    function updateDateDisplay() {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('pt-BR', options).replace('-feira', '');
-    }
-
-    function toggleTaskType() {
-        const type = document.querySelector('input[name="task-type"]:checked').value;
-        if (type === 'once') {
-            document.getElementById('date-picker-container').classList.remove('hidden');
-            document.getElementById('days-picker-container').classList.add('hidden');
-        } else {
-            document.getElementById('date-picker-container').classList.add('hidden');
-            document.getElementById('days-picker-container').classList.remove('hidden');
-        }
-    }
-
-    function toggleDay(el) {
-        el.classList.toggle('selected');
-    }
-
-    function saveTask() {
-        const title = document.getElementById('task-title').value.trim();
-        if (!title) {
-            showToast('Digite o título da tarefa!');
-            return;
+            return false;
         }
 
-        const type = document.querySelector('input[name="task-type"]:checked').value;
-        const id = document.getElementById('task-id').value || generateId();
-        let date = '';
-        let days = [];
+        /* ================= LÓGICA DE PENALIDADE (DECAY) ================= */
+        function runDecayLogic() {
+            const todayStr = getLocalTodayStr();
+            const todayDateObj = new Date(todayStr + 'T00:00:00');
+            let hasDecayed = false;
 
-        if (type === 'once') {
-            date = document.getElementById('task-date').value;
-            if(!date) return showToast('Selecione uma data!');
-        } else {
-            document.querySelectorAll('.day-btn.selected').forEach(btn => {
-                days.push(parseInt(btn.getAttribute('data-day')));
-            });
-            if (days.length === 0) return showToast('Selecione ao menos um dia!');
-        }
+            state.trackedTasks.forEach((slot, index) => {
+                if (!slot) return; // Vazio
 
-        const taskIndex = tasks.findIndex(t => t.id === id);
-        const newTask = {
-            id, title, type, date, days, completedDates: [], failedDates: []
-        };
+                // Verifica se a tarefa ainda existe, senão limpa o slot
+                const taskExists = state.tasks.find(t => t.id === slot.id);
+                if (!taskExists) {
+                    state.trackedTasks[index] = null;
+                    hasDecayed = true;
+                    return;
+                }
 
-        if (taskIndex > -1) {
-            // keep completion history
-            newTask.completedDates = tasks[taskIndex].completedDates;
-            newTask.failedDates = tasks[taskIndex].failedDates || [];
-            tasks[taskIndex] = newTask;
-            showToast('Tarefa atualizada!');
-        } else {
-            tasks.push(newTask);
-            showToast('Tarefa criada!');
-        }
+                if (!slot.lastCheck) {
+                    slot.lastCheck = todayStr;
+                    return;
+                }
 
-        saveData();
-        cancelEdit();
-        renderAllTasks();
-        renderTodayTasks();
-    }
+                if (slot.lastCheck !== todayStr) {
+                    let checkDateObj = new Date(slot.lastCheck + 'T00:00:00');
+                    checkDateObj.setDate(checkDateObj.getDate() + 1); // começa do dia seguinte ao ultimo check
 
-    function addExtraTask() {
-        const today = getTodayStr();
-        const newTask = {
-            id: generateId(),
-            title: `Atividade Extra (${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})`,
-            type: 'once',
-            date: today,
-            days: [],
-            completedDates: [],
-            failedDates: []
-        };
-        tasks.push(newTask);
-        saveData();
-        showToast('Atividade Extra adicionada para hoje!');
-        renderAllTasks();
-        renderTodayTasks();
-    }
-
-    function editTask(id) {
-        const task = tasks.find(t => t.id === id);
-        if(!task) return;
-
-        document.getElementById('form-title').innerText = 'Editar Tarefa';
-        document.getElementById('task-id').value = task.id;
-        document.getElementById('task-title').value = task.title;
-        document.getElementById('cancel-btn').classList.remove('hidden');
-
-        if(task.type === 'once') {
-            document.querySelector('input[value="once"]').checked = true;
-            document.getElementById('task-date').value = task.date;
-        } else {
-            document.querySelector('input[value="repeat"]').checked = true;
-            document.querySelectorAll('.day-btn').forEach(btn => {
-                if(task.days.includes(parseInt(btn.getAttribute('data-day')))) {
-                    btn.classList.add('selected');
-                } else {
-                    btn.classList.remove('selected');
+                    // Itera até ONTEM
+                    while (checkDateObj < todayDateObj) {
+                        let checkDateStr = dateToLocalStr(checkDateObj);
+                        
+                        // A tarefa estava agendada para este dia que passou?
+                        if (isScheduledForDateStr(taskExists, checkDateStr)) {
+                            // O usuário cumpriu?
+                            const status = state.completions[slot.id] ? state.completions[slot.id][checkDateStr] : undefined;
+                            
+                            if (status !== 'done') {
+                                // Se falhou ou ignorou, penaliza
+                                slot.level = Math.max(1, slot.level - 1);
+                                hasDecayed = true;
+                            }
+                        }
+                        checkDateObj.setDate(checkDateObj.getDate() + 1);
+                    }
+                    slot.lastCheck = todayStr; // Atualiza para hoje
                 }
             });
-        }
-        toggleTaskType();
-        window.scrollTo(0,0);
-    }
 
-    function cancelEdit() {
-        document.getElementById('form-title').innerText = 'Nova Tarefa';
-        document.getElementById('task-id').value = '';
-        document.getElementById('task-title').value = '';
-        document.getElementById('cancel-btn').classList.add('hidden');
-        document.querySelector('input[value="once"]').checked = true;
-        document.getElementById('task-date').value = getTodayStr();
-        document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('selected'));
-        toggleTaskType();
-    }
-
-    function deleteTask(id) {
-        tasks = tasks.filter(t => t.id !== id);
-        saveData();
-        renderAllTasks();
-        renderTodayTasks();
-        showToast('Tarefa excluída');
-    }
-
-    function markTaskStatus(id, status) {
-        const today = getTodayStr();
-        const task = tasks.find(t => t.id === id);
-        if(!task) return;
-
-        if (!task.failedDates) task.failedDates = [];
-
-        if (status === 'completed') {
-            if(!task.completedDates.includes(today)) {
-                task.completedDates.push(today);
-                addProgress(); 
-            }
-        } else if (status === 'failed') {
-            if(!task.failedDates.includes(today)) {
-                task.failedDates.push(today);
+            if (hasDecayed) {
+                saveState();
+                showToast("Nível de energia atualizado (penalidade aplicada por dias perdidos).");
+            } else if (state.trackedTasks.some(s => s && s.lastCheck !== todayStr)) {
+                // Atualizar último check para hoje sem penalidades, pra não processar de novo
+                state.trackedTasks.forEach(s => { if(s) s.lastCheck = todayStr; });
+                saveState();
             }
         }
-        
-        saveData();
-        renderTodayTasks(); 
-    }
 
-    // --- RENDERING ---
-    function isTaskForToday(task) {
-        const todayStr = getTodayStr();
-        const todayDay = getDayOfWeek();
-        if (task.type === 'once') return task.date === todayStr;
-        if (task.type === 'repeat') return task.days.includes(todayDay);
-        return false;
-    }
-
-    function renderTodayTasks() {
-        const list = document.getElementById('today-tasks-list');
-        const emptyState = document.getElementById('empty-state');
-        const todayStr = getTodayStr();
-        list.innerHTML = '';
-
-        let todayTasksCount = 0;
-
-        tasks.forEach(task => {
-            if (isTaskForToday(task)) {
-                todayTasksCount++;
-                const isCompleted = task.completedDates.includes(todayStr);
-                const isFailed = task.failedDates && task.failedDates.includes(todayStr);
-                const isAnswered = isCompleted || isFailed;
-                
-                const card = document.createElement('div');
-                card.className = `task-card p-4 rounded-xl flex flex-col gap-3 ${isCompleted ? 'task-completed opacity-70' : ''} ${isFailed ? 'opacity-70' : ''}`;
-                
-                card.innerHTML = `
-                    <div class="flex-1">
-                        <h4 class="task-title font-medium ${isFailed ? 'text-red-500 line-through' : ''}">${task.title}</h4>
-                        <span class="text-xs text-primary bg-blue-100 dark:bg-blue-900/30 px-2 py-1 rounded-md mt-1 inline-block">
-                            ${task.type === 'once' ? 'Hoje' : 'Rotina'}
-                        </span>
-                    </div>
-                    ${!isAnswered ? `
-                    <div class="flex gap-2 w-full mt-2">
-                        <button onclick="markTaskStatus('${task.id}', 'failed')" class="flex-1 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-semibold transition active:scale-95">Não Concluída</button>
-                        <button onclick="markTaskStatus('${task.id}', 'completed')" class="flex-1 py-2 btn-primary rounded-lg text-sm font-semibold transition active:scale-95">Concluída</button>
-                    </div>
-                    ` : `
-                    <div class="w-full text-right mt-1">
-                        <span class="text-xs font-bold ${isCompleted ? 'text-green-500' : 'text-red-500'}">
-                            <i class="fas ${isCompleted ? 'fa-check' : 'fa-times'}"></i> ${isCompleted ? 'Concluída' : 'Não Concluída'}
-                        </span>
-                    </div>
-                    `}
-                `;
-                list.appendChild(card);
+        /* ================= AÇÕES PRINCIPAIS ================= */
+        function markTask(taskId, status) {
+            const todayStr = getLocalTodayStr();
+            
+            // Registra em completions
+            if (!state.completions[taskId]) {
+                state.completions[taskId] = {};
             }
-        });
+            state.completions[taskId][todayStr] = status;
 
-        if (todayTasksCount === 0) {
-            emptyState.classList.remove('hidden');
-            emptyState.classList.add('flex');
-        } else {
-            emptyState.classList.add('hidden');
-            emptyState.classList.remove('flex');
-        }
-    }
+            // Se for monitorada, ajusta o nível
+            const slotIndex = state.trackedTasks.findIndex(slot => slot && slot.id === taskId);
+            if (slotIndex !== -1) {
+                let slot = state.trackedTasks[slotIndex];
+                if (status === 'done') {
+                    slot.level = Math.min(3, slot.level + 1); // sobe até máx 3
+                } else if (status === 'failed') {
+                    slot.level = Math.max(1, slot.level - 1); // desce até min 1
+                }
+            }
 
-    function renderAllTasks() {
-        const list = document.getElementById('all-tasks-list');
-        list.innerHTML = '';
-
-        if(tasks.length === 0) {
-            list.innerHTML = `<p class="text-center opacity-50 py-4 text-sm">Nenhuma tarefa cadastrada.</p>`;
-            return;
+            saveState();
+            renderTracker();
+            renderTodayTasks();
         }
 
-        // Sort: repeat first, then by date
-        const sortedTasks = [...tasks].sort((a, b) => {
-            if(a.type !== b.type) return a.type === 'repeat' ? -1 : 1;
-            return a.date.localeCompare(b.date);
-        });
+        function saveTask() {
+            const title = document.getElementById('task-title').value.trim();
+            const type = document.querySelector('input[name="task-type"]:checked').value;
+            const idInput = document.getElementById('task-id').value;
 
-        sortedTasks.forEach(task => {
-            let subtitle = '';
-            if (task.type === 'once') {
-                const dateParts = task.date.split('-');
-                subtitle = `Data: ${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            if (!title) return showToast('Digite um nome para a tarefa!');
+
+            let date = '';
+            let selectedDays = [];
+
+            if (type === 'once') {
+                date = document.getElementById('task-date').value;
+                if(!date) return showToast('Selecione uma data!');
             } else {
-                subtitle = `Repete: ${task.days.map(d => daysOfWeekStr[d]).join(', ')}`;
+                document.querySelectorAll('.day-checkbox:checked').forEach(cb => {
+                    selectedDays.push(parseInt(cb.value));
+                });
+                if(selectedDays.length === 0) return showToast('Selecione pelo menos um dia!');
             }
 
-            const card = document.createElement('div');
-            card.className = 'task-card p-4 rounded-xl flex items-center justify-between';
-            card.innerHTML = `
-                <div>
-                    <h4 class="font-medium">${task.title}</h4>
-                    <p class="text-xs mt-1" style="color: var(--text-muted);">${subtitle}</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="editTask('${task.id}')" class="w-8 h-8 rounded-full surface border flex items-center justify-center text-blue-500 active:bg-gray-100 dark:active:bg-gray-700">
-                        <i class="fas fa-pen text-xs"></i>
-                    </button>
-                    <button onclick="deleteTask('${task.id}')" class="w-8 h-8 rounded-full surface border flex items-center justify-center text-red-500 active:bg-gray-100 dark:active:bg-gray-700">
-                        <i class="fas fa-trash text-xs"></i>
-                    </button>
-                </div>
-            `;
-            list.appendChild(card);
-        });
-    }
+            const isEdit = !!idInput;
+            const taskId = isEdit ? idInput : Math.random().toString(36).substring(2, 9);
 
-    function resetData() {
-        localStorage.clear();
-        location.reload();
-    }
+            const taskData = {
+                id: taskId,
+                title: title,
+                type: type,
+                date: date,
+                days: selectedDays
+            };
 
-    // Run on load
-    window.onload = init;
+            if (isEdit) {
+                const idx = state.tasks.findIndex(t => t.id === taskId);
+                state.tasks[idx] = taskData;
+                showToast('Tarefa atualizada!');
+            } else {
+                state.tasks.push(taskData);
+                showToast('Tarefa criada!');
+            }
 
-</script>
+            saveState();
+            resetForm();
+            renderTracker(); // caso o nome mude
+            renderTodayTasks();
+            renderAllTasks();
+        }
+
+        function addExtraTask() {
+            const todayStr = getLocalTodayStr();
+            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const taskData = {
+                id: Math.random().toString(36).substring(2, 9),
+                title: `Atividade Extra (${timeStr})`,
+                type: 'once',
+                date: todayStr,
+                days: []
+            };
+            
+            state.tasks.push(taskData);
+            saveState();
+            showToast('Atividade Extra adicionada pro dia atual!');
+            switchTab('hoje', document.querySelector('.nav-btn'));
+        }
+
+        function editTask(taskId) {
+            const task = state.tasks.find(t => t.id === taskId);
+            if(!task) return;
+
+            document.getElementById('form-title').innerText = 'Editar Tarefa';
+            document.getElementById('task-id').value = task.id;
+            document.getElementById('task-title').value = task.title;
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+
+            if (task.type === 'once') {
+                document.querySelector('input[value="once"]').checked = true;
+                document.getElementById('task-date').value = task.date;
+            } else {
+                document.querySelector('input[value="repeat"]').checked = true;
+                document.querySelectorAll('.day-checkbox').forEach(cb => {
+                    cb.checked = task.days.includes(parseInt(cb.value));
+                });
+            }
+            
+            toggleTaskType();
+            switchTab('cadastrar', document.querySelectorAll('.nav-btn')[1]);
+            document.querySelector('main').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteTask(taskId) {
+            // Remove the task
+            state.tasks = state.tasks.filter(t => t.id !== taskId);
+            
+            // Remove from completions logic
+            delete state.completions[taskId];
+            
+            // Remove from tracked array if present
+            state.trackedTasks = state.trackedTasks.map(slot => (slot && slot.id === taskId) ? null : slot);
+
+            saveState();
+            renderTracker();
+            renderTodayTasks();
+            renderAllTasks();
+            showToast('Tarefa excluída do sistema');
+        }
+
+        /* ================= TRACKER E MODALS ================= */
+        function renderTracker() {
+            const container = document.getElementById('tracked-squares');
+            container.innerHTML = '';
+
+            state.trackedTasks.forEach((slot, index) => {
+                let div = document.createElement('div');
+                
+                if (slot) {
+                    const task = state.tasks.find(t => t.id === slot.id);
+                    let title = task ? task.title : '??';
+                    let initials = title.substring(0, 2).toUpperCase();
+                    
+                    let bgClass = 'bg-red-500'; // level 1
+                    if (slot.level === 2) bgClass = 'bg-yellow-400 text-gray-900'; 
+                    else if (slot.level === 3) bgClass = 'bg-green-500';
+
+                    if(slot.level !== 2) bgClass += ' text-white';
+
+                    div.className = `w-[18%] aspect-square rounded-2xl flex items-center justify-center font-bold text-xl shadow-md ${bgClass} transition-transform active:scale-95 cursor-pointer`;
+                    div.innerText = initials;
+                    div.onclick = () => openRemoveTrackModal(index);
+                } else {
+                    div.className = `w-[18%] aspect-square rounded-2xl flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-400 border-2 border-dashed border-gray-300 dark:border-gray-600 opacity-60 transition-transform active:scale-95 cursor-pointer`;
+                    div.innerHTML = '<i class="fas fa-plus text-sm opacity-50"></i>';
+                    div.onclick = () => openAddTrackModal(index);
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function openAddTrackModal(slotIndex) {
+            document.getElementById('pending-slot-index').value = slotIndex;
+            const list = document.getElementById('track-task-list');
+            list.innerHTML = '';
+            
+            // Filtrar tarefas que não estão sendo monitoradas no momento
+            const currentlyTrackedIds = state.trackedTasks.filter(s => s !== null).map(s => s.id);
+            const availableTasks = state.tasks.filter(t => !currentlyTrackedIds.includes(t.id));
+
+            if(availableTasks.length === 0) {
+                list.innerHTML = `<p class="text-sm text-center py-4 text-gray-500">Nenhuma tarefa disponível. Crie uma nova primeiro.</p>`;
+            } else {
+                availableTasks.forEach(t => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-3 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition border border-transparent";
+                    btn.innerHTML = `<div class="font-bold text-sm">${t.title}</div><div class="text-xs text-gray-500">${t.type === 'once' ? 'Única' : 'Rotina'}</div>`;
+                    btn.onclick = () => confirmAddTrack(t.id, slotIndex);
+                    list.appendChild(btn);
+                });
+            }
+
+            document.getElementById('modal-add-track').classList.add('active');
+        }
+
+        function confirmAddTrack(taskId, slotIndex) {
+            state.trackedTasks[slotIndex] = {
+                id: taskId,
+                level: 1, // Começa no Nível 1
+                lastCheck: getLocalTodayStr()
+            };
+            saveState();
+            renderTracker();
+            renderTodayTasks();
+            closeModals();
+            showToast('Tarefa em monitoramento!');
+        }
+
+        function openRemoveTrackModal(slotIndex) {
+            document.getElementById('remove-slot-index').value = slotIndex;
+            document.getElementById('modal-remove-track').classList.add('active');
+        }
+
+        function confirmRemoveTrack() {
+            const idx = parseInt(document.getElementById('remove-slot-index').value);
+            state.trackedTasks[idx] = null;
+            saveState();
+            renderTracker();
+            renderTodayTasks();
+            closeModals();
+            showToast('Monitoramento removido.');
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('active'));
+        }
+
+        /* ================= RENDERIZAÇÃO ================= */
+        function renderTodayTasks() {
+            const list = document.getElementById('today-tasks-list');
+            const emptyState = document.getElementById('empty-state');
+            const todayStr = getLocalTodayStr();
+            
+            list.innerHTML = '';
+            let count = 0;
+
+            state.tasks.forEach(task => {
+                if (isScheduledForDateStr(task, todayStr)) {
+                    count++;
+                    const status = state.completions[task.id] ? state.completions[task.id][todayStr] : undefined;
+                    const isTracked = state.trackedTasks.some(slot => slot && slot.id === task.id);
+                    
+                    const el = document.createElement('div');
+                    el.className = `bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl shadow-sm ${status ? 'opacity-70' : ''}`;
+                    
+                    let statusHtml = '';
+                    if (!status) {
+                        statusHtml = `
+                        <div class="flex gap-2 mt-4">
+                            <button onclick="markTask('${task.id}', 'failed')" class="flex-1 py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg text-sm font-bold active:scale-95 transition">Não Concluída</button>
+                            <button onclick="markTask('${task.id}', 'done')" class="flex-1 py-3 bg-green-500 text-white rounded-lg text-sm font-bold active:scale-95 transition shadow-sm hover:bg-green-600">Concluída</button>
+                        </div>`;
+                    } else {
+                        const isDone = status === 'done';
+                        const icon = isDone ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500';
+                        const text = isDone ? 'Finalizada' : 'Falhou';
+                        const textColor = isDone ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+                        const lineThroughClass = isDone ? 'line-through text-gray-500' : 'text-gray-900 dark:text-white';
+                        
+                        statusHtml = `
+                        <div class="w-full text-right mt-2 bg-gray-50 dark:bg-gray-750 rounded p-2 text-center border border-gray-100 dark:border-gray-700">
+                            <span class="text-sm font-bold ${textColor}">
+                                <i class="fas ${icon} mr-1"></i> ${text}
+                            </span>
+                        </div>`;
+
+                        // Hack pra aplicar line-through na hora que renderiza os botões como done
+                        setTimeout(() => {
+                            const tHeader = el.querySelector('h4');
+                            if(tHeader && isDone) {
+                                tHeader.classList.add('line-through', 'text-gray-400');
+                                tHeader.classList.remove('text-gray-900', 'dark:text-white');
+                            }
+                        }, 0);
+                    }
+
+                    const trackBadge = isTracked ? `<i class="fas fa-bolt text-yellow-500 text-xs ml-2" title="Monitorada"></i>` : '';
+
+                    el.innerHTML = `
+                        <div>
+                            <h4 class="font-bold text-lg text-gray-900 dark:text-white transition-colors duration-300 flex items-center gap-1">
+                                <span>${task.title}</span> ${trackBadge}
+                            </h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-1">${task.type === 'once' ? 'Atividade Hoje' : 'Rotina'}</p>
+                        </div>
+                        ${statusHtml}
+                    `;
+                    list.appendChild(el);
+                }
+            });
+
+            if (count === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+        }
+
+        function renderAllTasks() {
+            const list = document.getElementById('all-tasks-list');
+            list.innerHTML = '';
+
+            if (state.tasks.length === 0) {
+                list.innerHTML = `<div class="text-center py-8 text-gray-400 border border-dashed border-gray-300 dark:border-gray-700 rounded-xl">Nenhuma tarefa salva.</div>`;
+                return;
+            }
+
+            state.tasks.forEach(task => {
+                let subtitle = task.type === 'once' ? 
+                    `Data: ${task.date.split('-').reverse().join('/')}` : 
+                    `Repete: ${task.days.map(d => daysOfWeek[d]).join(', ')}`;
+
+                const el = document.createElement('div');
+                el.className = 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-4 rounded-xl shadow-sm flex items-center justify-between';
+                el.innerHTML = `
+                    <div>
+                        <h4 class="font-bold text-gray-900 dark:text-white flex items-center">${task.title}</h4>
+                        <div class="flex items-center mt-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400">${subtitle}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editTask('${task.id}')" class="w-10 h-10 rounded-full bg-blue-50 dark:bg-gray-700 text-blue-600 flex items-center justify-center active:scale-90 transition">
+                            <i class="fas fa-pen text-sm"></i>
+                        </button>
+                        <button onclick="deleteTask('${task.id}')" class="w-10 h-10 rounded-full bg-red-50 dark:bg-gray-700 text-red-600 flex items-center justify-center active:scale-90 transition">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        /* ================= CONTROLES GERAIS E TAB ================= */
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-blue-600', 'dark:text-blue-400');
+                btn.classList.add('text-gray-400', 'dark:text-gray-500');
+                if(btn.querySelector('i')) btn.querySelector('i').classList.remove('text-blue-600');
+            });
+
+            btnElement.classList.add('text-blue-600');
+            btnElement.classList.remove('text-gray-400', 'dark:text-gray-500');
+            
+            if(tabId === 'hoje') { renderTracker(); renderTodayTasks(); }
+            if(tabId === 'cadastrar') renderAllTasks();
+        }
+
+        function toggleTaskType() {
+            const type = document.querySelector('input[name="task-type"]:checked').value;
+            if (type === 'once') {
+                document.getElementById('date-picker-container').classList.remove('hidden');
+                document.getElementById('days-picker-container').classList.add('hidden');
+            } else {
+                document.getElementById('date-picker-container').classList.add('hidden');
+                document.getElementById('days-picker-container').classList.remove('hidden');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('form-title').innerText = 'Nova Tarefa';
+            document.getElementById('task-id').value = '';
+            document.getElementById('task-title').value = '';
+            document.querySelector('input[value="once"]').checked = true;
+            document.getElementById('task-date').value = getLocalTodayStr();
+            document.querySelectorAll('.day-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+            toggleTaskType();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.add('show-toast');
+            setTimeout(() => toast.classList.remove('show-toast'), 3000);
+        }
+
+        /* ================= CONFIGURAÇÕES E STORAGE ================= */
+        function applyTheme(theme) {
+            const root = document.documentElement;
+            const indicators = document.querySelectorAll('#theme-icon-indicator, #theme-icon-btn');
+            
+            if (theme === 'dark') {
+                root.classList.add('dark');
+                indicators.forEach(i => {
+                    i.classList.remove('fa-moon', 'text-gray-700');
+                    i.classList.add('fa-sun', 'text-yellow-400');
+                });
+            } else {
+                root.classList.remove('dark');
+                indicators.forEach(i => {
+                    i.classList.remove('fa-sun', 'text-yellow-400');
+                    i.classList.add('fa-moon', 'text-gray-700');
+                });
+            }
+        }
+
+        function toggleTheme() {
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            applyTheme(state.theme);
+            saveState();
+        }
+
+        function openResetModal() {
+            document.getElementById('modal-reset').classList.add('active');
+        }
+
+        function executeReset() {
+            localStorage.removeItem('tasks');
+            localStorage.removeItem('completions');
+            localStorage.removeItem('trackedTasks');
+            // Mantendo o tema
+            location.reload();
+        }
+
+        function saveState() {
+            localStorage.setItem('tasks', JSON.stringify(state.tasks));
+            localStorage.setItem('completions', JSON.stringify(state.completions));
+            localStorage.setItem('trackedTasks', JSON.stringify(state.trackedTasks));
+            localStorage.setItem('theme', state.theme);
+        }
+
+        window.onload = init;
+
+    </script>
 </body>
 </html>
