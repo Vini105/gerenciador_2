@@ -97,7 +97,7 @@
                     <!-- Quadrados renderizados via JS -->
                 </div>
                 <p class="text-xs text-center text-slate-500 dark:text-slate-400 mt-3 px-2">
-                    Nível: <span class="text-red-500 font-bold">1</span>, <span class="text-yellow-500 font-bold">2</span>, <span class="text-green-500 font-bold">3</span>.
+                    Níveis: <span class="text-red-500 font-bold">1</span> • <span class="text-orange-500 font-bold">2</span> • <span class="text-yellow-500 font-bold">3</span> • <span class="text-emerald-500 font-bold">4</span>
                 </p>
             </section>
 
@@ -119,20 +119,29 @@
         <div id="tab-cadastrar" class="tab-content">
             <h1 class="text-3xl font-bold mb-6 pt-2 text-slate-900 dark:text-white">Gerenciar</h1>
 
-            <!-- Botão Atividade Extra Rápida -->
-            <button onclick="addExtraTask()" class="w-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 p-4 rounded-xl font-bold flex items-center justify-center gap-2 mb-8 shadow-sm transition active:scale-95">
-                <i class="fas fa-bolt text-lg"></i> Adicionar Atividade Extra Hoje
-            </button>
-
             <!-- Formulário -->
             <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl mb-8 shadow-sm">
                 <h2 id="form-title" class="text-lg font-bold mb-5 border-b border-slate-200 dark:border-slate-700 pb-2 text-slate-900 dark:text-white">Nova Tarefa</h2>
                 
                 <input type="hidden" id="task-id">
                 
-                <div class="mb-5">
+                <div class="mb-4">
                     <label class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Nome da Tarefa</label>
                     <input type="text" id="task-title" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg p-3 text-slate-900 dark:text-white outline-none focus:border-blue-500 transition" placeholder="Ex: Ler 10 páginas">
+                </div>
+
+                <!-- Emoji da Tarefa -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Emoji da Tarefa</label>
+                    <input type="text" id="task-emoji" maxlength="10" value="📌" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg p-3 text-xl text-slate-900 dark:text-white outline-none focus:border-blue-500 transition" placeholder="Digite ou cole um emoji (ex: 📌)">
+                </div>
+
+                <!-- Categoria da Tarefa -->
+                <div class="mb-5">
+                    <label class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">Categoria</label>
+                    <select id="task-category" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg p-3 text-slate-900 dark:text-white outline-none focus:border-blue-500 transition">
+                        <option value="">Sem categoria</option>
+                    </select>
                 </div>
 
                 <div class="mb-5">
@@ -186,7 +195,26 @@
 
         <!-- ================= ABA AJUSTES ================= -->
         <div id="tab-ajustes" class="tab-content">
-            <h1 class="text-3xl font-bold mb-8 pt-2 text-slate-900 dark:text-white">Ajustes</h1>
+            <h1 class="text-3xl font-bold mb-6 pt-2 text-slate-900 dark:text-white">Ajustes</h1>
+
+            <!-- Seção de Categorias de Tarefas -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 mb-6 shadow-sm">
+                <h2 class="text-lg font-bold mb-1 text-slate-900 dark:text-white">Categorias de Tarefas</h2>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Organize suas tarefas e monitore categorias inteiras</p>
+
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="category-emoji" maxlength="10" value="📁" class="w-16 text-center text-xl bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 text-slate-900 dark:text-white outline-none focus:border-blue-500 transition" placeholder="📁">
+                    <input type="text" id="category-name" class="flex-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white outline-none focus:border-blue-500 transition" placeholder="Nome (ex: Saúde, Estudos)">
+                    <button onclick="saveCategory()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 rounded-lg font-bold text-sm active:scale-95 transition shadow-sm">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <!-- Lista de Categorias -->
+                <div id="categories-list" class="space-y-2 max-h-48 overflow-y-auto">
+                    <!-- Categorias renderizadas via JS -->
+                </div>
+            </div>
 
             <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden mb-6 shadow-sm">
                 <!-- Tema -->
@@ -242,8 +270,19 @@
     <!-- Modal: Adicionar Monitoramento -->
     <div id="modal-add-track" class="modal-overlay fixed inset-0 items-center justify-center">
         <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative border border-slate-200 dark:border-slate-700">
-            <h3 class="text-xl font-bold mb-4 text-slate-900 dark:text-white">Monitorar Tarefa</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Escolha uma tarefa para ocupar este slot de monitoramento:</p>
+            <h3 class="text-xl font-bold mb-1 text-slate-900 dark:text-white">Monitorar Frequência</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Escolha uma tarefa individual ou uma categoria inteira:</p>
+            
+            <!-- Seletor de Tipo no Modal -->
+            <div class="flex gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 mb-4">
+                <button type="button" id="track-tab-task" onclick="switchTrackModalTab('task')" class="flex-1 py-2 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition">
+                    Tarefas
+                </button>
+                <button type="button" id="track-tab-category" onclick="switchTrackModalTab('category')" class="flex-1 py-2 rounded-lg text-xs font-bold text-slate-500 dark:text-slate-400 transition">
+                    Categorias
+                </button>
+            </div>
+
             <div id="track-task-list" class="max-h-60 overflow-y-auto space-y-2 mb-4 border border-slate-200 dark:border-slate-700 rounded-xl p-2 bg-slate-50 dark:bg-slate-900">
                 <!-- Preenchido via JS -->
             </div>
@@ -257,7 +296,7 @@
         <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl relative text-center border border-slate-200 dark:border-slate-700">
             <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fas fa-unlink"></i></div>
             <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Parar de Monitorar?</h3>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Esta tarefa não será mais monitorada aqui, mas seu histórico não será apagado das tarefas gerais.</p>
+            <p id="remove-track-desc" class="text-sm text-slate-500 dark:text-slate-400 mb-6">Este item não será mais monitorado aqui, mas seu histórico não será apagado.</p>
             <input type="hidden" id="remove-slot-index">
             <div class="flex gap-3">
                 <button onclick="closeModals()" class="flex-1 py-3 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl font-bold active:scale-95 transition">Cancelar</button>
@@ -288,132 +327,325 @@
         /* ================= ESTADO DA APLICAÇÃO ================= */
         let state = {
             tasks: JSON.parse(localStorage.getItem('tasks')) || [],
+            categories: JSON.parse(localStorage.getItem('categories')) || [],
             completions: JSON.parse(localStorage.getItem('completions')) || {},
+            missedTasks: JSON.parse(localStorage.getItem('missedTasks')) || [],
             trackedTasks: JSON.parse(localStorage.getItem('trackedTasks')) || [null, null, null, null, null],
+            lastCheckDate: localStorage.getItem('lastCheckDate') || null,
             theme: localStorage.getItem('theme') || 'dark'
         };
 
         const daysOfWeek = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        let currentTrackModalTab = 'task';
 
         /* ================= INICIALIZAÇÃO ================= */
         function init() {
+            // Normaliza slots antigos para suportarem targetType ('task' | 'category')
+            state.trackedTasks = state.trackedTasks.map(slot => {
+                if (!slot) return null;
+                return {
+                    ...slot,
+                    targetType: slot.targetType || 'task',
+                    level: Math.min(4, Math.max(1, slot.level || 1))
+                };
+            });
+
             applyTheme(state.theme);
             document.getElementById('task-date').value = getLocalTodayStr();
             updateDateHeader();
             
-            runDecayLogic();
+            processDailyMissedTasksAndPenalties();
 
+            renderCategories();
+            updateCategorySelect();
             renderTracker();
             renderTodayTasks();
             renderAllTasks();
+
+            // Verifica virada de dia enquanto o app estiver aberto
+            setInterval(() => {
+                const nowStr = getLocalTodayStr();
+                if (state.lastCheckDate && state.lastCheckDate !== nowStr) {
+                    updateDateHeader();
+                    processDailyMissedTasksAndPenalties();
+                    renderTracker();
+                    renderTodayTasks();
+                }
+            }, 60000);
         }
 
         /* ================= UTILITÁRIOS DE DATA ================= */
+        function dateToLocalStr(dateObj) {
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         function getLocalTodayStr() {
             return dateToLocalStr(new Date());
         }
 
-        function dateToLocalStr(dateObj) {
-            const y = dateObj.getFullYear();
-            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const d = String(dateObj.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
-        }
-
         function updateDateHeader() {
+            const now = new Date();
             const options = { weekday: 'long', day: 'numeric', month: 'long' };
-            let str = new Date().toLocaleDateString('pt-BR', options);
-            document.getElementById('date-display').innerText = str.charAt(0).toUpperCase() + str.slice(1);
+            let formatted = now.toLocaleDateString('pt-BR', options);
+            formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+            const display = document.getElementById('date-display');
+            if (display) display.innerText = formatted;
         }
 
-        function isScheduledForDateStr(task, targetDateStr) {
+        function isScheduledForDateStr(task, dateStr) {
             if (task.type === 'once') {
-                return task.date === targetDateStr;
-            } else if (task.type === 'repeat') {
-                let targetDate = new Date(targetDateStr + 'T00:00:00');
-                let dayOfWeek = targetDate.getDay();
-                return task.days.includes(dayOfWeek);
+                return task.date === dateStr;
+            } else if (task.type === 'repeat' && Array.isArray(task.days)) {
+                const dateObj = new Date(dateStr + 'T00:00:00');
+                return task.days.includes(dateObj.getDay());
             }
             return false;
         }
 
-        /* ================= LÓGICA DE PENALIDADE (DECAY) ================= */
-        function runDecayLogic() {
+        /* ================= VERIFICAÇÃO DIÁRIA E PENALIDADE AUTOMÁTICA ================= */
+        function processDailyMissedTasksAndPenalties() {
             const todayStr = getLocalTodayStr();
             const todayDateObj = new Date(todayStr + 'T00:00:00');
-            let hasDecayed = false;
+            let totalPenaltiesApplied = 0;
+            let stateChanged = false;
 
+            // Remove referências de tarefas ou categorias excluídas nos slots monitorados
             state.trackedTasks.forEach((slot, index) => {
-                if (!slot) return; 
-
-                const taskExists = state.tasks.find(t => t.id === slot.id);
-                if (!taskExists) {
-                    state.trackedTasks[index] = null;
-                    hasDecayed = true;
-                    return;
-                }
-
-                if (!slot.lastCheck) {
-                    slot.lastCheck = todayStr;
-                    return;
-                }
-
-                if (slot.lastCheck !== todayStr) {
-                    let checkDateObj = new Date(slot.lastCheck + 'T00:00:00');
-                    checkDateObj.setDate(checkDateObj.getDate() + 1); 
-
-                    while (checkDateObj < todayDateObj) {
-                        let checkDateStr = dateToLocalStr(checkDateObj);
-                        
-                        if (isScheduledForDateStr(taskExists, checkDateStr)) {
-                            const status = state.completions[slot.id] ? state.completions[slot.id][checkDateStr] : undefined;
-                            
-                            if (status !== 'done') {
-                                slot.level = Math.max(1, slot.level - 1);
-                                hasDecayed = true;
-                            }
-                        }
-                        checkDateObj.setDate(checkDateObj.getDate() + 1);
+                if (!slot) return;
+                if (slot.targetType === 'category') {
+                    const catExists = state.categories.some(c => c.id === slot.id);
+                    if (!catExists) {
+                        state.trackedTasks[index] = null;
+                        stateChanged = true;
                     }
-                    slot.lastCheck = todayStr; 
+                } else {
+                    const taskExists = state.tasks.some(t => t.id === slot.id);
+                    if (!taskExists) {
+                        state.trackedTasks[index] = null;
+                        stateChanged = true;
+                    }
                 }
             });
 
-            if (hasDecayed) {
+            // Determina a data inicial de verificação (retroage desde lastCheckDate ou lastCheck dos slots)
+            let startCheckStr = state.lastCheckDate;
+            if (!startCheckStr) {
+                const slotDates = state.trackedTasks
+                    .filter(s => s && s.lastCheck)
+                    .map(s => s.lastCheck)
+                    .sort();
+                startCheckStr = slotDates.length > 0 ? slotDates[0] : todayStr;
+            }
+
+            if (startCheckStr < todayStr) {
+                let cursorDate = new Date(startCheckStr + 'T00:00:00');
+
+                // Percorre todos os dias anteriores até ontem
+                while (cursorDate < todayDateObj) {
+                    const checkDateStr = dateToLocalStr(cursorDate);
+
+                    state.tasks.forEach(task => {
+                        if (isScheduledForDateStr(task, checkDateStr)) {
+                            const status = state.completions[task.id] ? state.completions[task.id][checkDateStr] : undefined;
+
+                            // Se não foi concluída ('failed' ou deixada em branco/undefined)
+                            if (status !== 'done') {
+                                const alreadyRecorded = state.missedTasks.some(
+                                    m => m.taskId === task.id && m.date === checkDateStr
+                                );
+
+                                if (!alreadyRecorded) {
+                                    // Armazena no histórico de tarefas não concluídas
+                                    state.missedTasks.push({
+                                        taskId: task.id,
+                                        taskTitle: task.title,
+                                        categoryId: task.categoryId || null,
+                                        date: checkDateStr,
+                                        reason: status === 'failed' ? 'marked_failed' : 'expired_uncompleted'
+                                    });
+                                    stateChanged = true;
+
+                                    // Desconta 1 nível se a tarefa individual ou sua categoria estiverem monitoradas
+                                    state.trackedTasks.forEach(slot => {
+                                        if (!slot) return;
+                                        const isTaskTracked = slot.targetType === 'task' && slot.id === task.id;
+                                        const isCategoryTracked = slot.targetType === 'category' && task.categoryId && slot.id === task.categoryId;
+
+                                        if (isTaskTracked || isCategoryTracked) {
+                                            if (slot.level > 1) {
+                                                slot.level = Math.max(1, slot.level - 1);
+                                            }
+                                            totalPenaltiesApplied++;
+                                            stateChanged = true;
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+
+                    cursorDate.setDate(cursorDate.getDate() + 1);
+                }
+            }
+
+            // Atualiza marcadores de última checagem para hoje
+            state.trackedTasks.forEach(slot => {
+                if (slot && slot.lastCheck !== todayStr) {
+                    slot.lastCheck = todayStr;
+                    stateChanged = true;
+                }
+            });
+
+            if (state.lastCheckDate !== todayStr) {
+                state.lastCheckDate = todayStr;
+                stateChanged = true;
+            }
+
+            if (stateChanged) {
                 saveState();
-                showToast("Nível de energia atualizado (penalidade aplicada).");
-            } else if (state.trackedTasks.some(s => s && s.lastCheck !== todayStr)) {
-                state.trackedTasks.forEach(s => { if(s) s.lastCheck = todayStr; });
-                saveState();
+            }
+
+            if (totalPenaltiesApplied > 0) {
+                showToast(`Penalidade aplicada por ${totalPenaltiesApplied} tarefa(s) não concluída(s).`);
             }
         }
 
         /* ================= AÇÕES PRINCIPAIS ================= */
         function markTask(taskId, status) {
             const todayStr = getLocalTodayStr();
+            const task = state.tasks.find(t => t.id === taskId);
             
             if (!state.completions[taskId]) {
                 state.completions[taskId] = {};
             }
             state.completions[taskId][todayStr] = status;
 
-            const slotIndex = state.trackedTasks.findIndex(slot => slot && slot.id === taskId);
-            if (slotIndex !== -1) {
-                let slot = state.trackedTasks[slotIndex];
-                if (status === 'done') {
-                    slot.level = Math.min(3, slot.level + 1);
-                } else if (status === 'failed') {
-                    slot.level = Math.max(1, slot.level - 1);
+            // Se marcou hoje como Não Concluída, já registra imediatamente no histórico de não concluídas
+            if (status === 'failed' && task) {
+                const alreadyRecorded = state.missedTasks.some(m => m.taskId === taskId && m.date === todayStr);
+                if (!alreadyRecorded) {
+                    state.missedTasks.push({
+                        taskId: task.id,
+                        taskTitle: task.title,
+                        categoryId: task.categoryId || null,
+                        date: todayStr,
+                        reason: 'marked_failed'
+                    });
                 }
             }
+
+            // Atualiza todos os quadrados monitorados correspondentes (tarefa individual e/ou categoria dela)
+            state.trackedTasks.forEach(slot => {
+                if (!slot) return;
+                const matchesTask = slot.targetType === 'task' && slot.id === taskId;
+                const matchesCategory = slot.targetType === 'category' && task && task.categoryId && slot.id === task.categoryId;
+
+                if (matchesTask || matchesCategory) {
+                    if (status === 'done') {
+                        slot.level = Math.min(4, slot.level + 1);
+                    } else if (status === 'failed') {
+                        slot.level = Math.max(1, slot.level - 1);
+                    }
+                }
+            });
 
             saveState();
             renderTracker();
             renderTodayTasks();
         }
 
+        function saveCategory() {
+            const nameInput = document.getElementById('category-name');
+            const emojiInput = document.getElementById('category-emoji');
+            const name = nameInput.value.trim();
+            const emoji = emojiInput.value.trim() || '📁';
+
+            if (!name) return showToast('Digite o nome da categoria!');
+
+            const newCat = {
+                id: 'cat_' + Math.random().toString(36).substring(2, 9),
+                name: name,
+                emoji: emoji
+            };
+
+            state.categories.push(newCat);
+            saveState();
+
+            nameInput.value = '';
+            emojiInput.value = '📁';
+
+            renderCategories();
+            updateCategorySelect();
+            showToast('Categoria criada!');
+        }
+
+        function deleteCategory(catId) {
+            state.categories = state.categories.filter(c => c.id !== catId);
+            // Desvincula categoria das tarefas que a utilizavam
+            state.tasks.forEach(t => {
+                if (t.categoryId === catId) t.categoryId = '';
+            });
+            // Remove monitoramento se algum slot monitorava esta categoria
+            state.trackedTasks = state.trackedTasks.map(slot =>
+                (slot && slot.targetType === 'category' && slot.id === catId) ? null : slot
+            );
+
+            saveState();
+            renderCategories();
+            updateCategorySelect();
+            renderTracker();
+            renderTodayTasks();
+            renderAllTasks();
+            showToast('Categoria removida');
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categories-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (state.categories.length === 0) {
+                container.innerHTML = `<p class="text-xs text-center py-3 text-slate-400 dark:text-slate-500">Nenhuma categoria cadastrada.</p>`;
+                return;
+            }
+
+            state.categories.forEach(cat => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700';
+                item.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-xl">${cat.emoji}</span>
+                        <span class="font-semibold text-sm text-slate-800 dark:text-slate-200">${cat.name}</span>
+                    </div>
+                    <button onclick="deleteCategory('${cat.id}')" class="w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-500 flex items-center justify-center active:scale-90 transition">
+                        <i class="fas fa-trash text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateCategorySelect() {
+            const select = document.getElementById('task-category');
+            if (!select) return;
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">Sem categoria</option>';
+            state.categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.id;
+                opt.textContent = `${cat.emoji} ${cat.name}`;
+                select.appendChild(opt);
+            });
+            select.value = currentVal;
+        }
+
         function saveTask() {
             const title = document.getElementById('task-title').value.trim();
+            const emoji = document.getElementById('task-emoji').value.trim() || '📌';
+            const categoryId = document.getElementById('task-category').value;
             const type = document.querySelector('input[name="task-type"]:checked').value;
             const idInput = document.getElementById('task-id').value;
 
@@ -438,6 +670,8 @@
             const taskData = {
                 id: taskId,
                 title: title,
+                emoji: emoji,
+                categoryId: categoryId || '',
                 type: type,
                 date: date,
                 days: selectedDays
@@ -459,31 +693,16 @@
             renderAllTasks();
         }
 
-        function addExtraTask() {
-            const todayStr = getLocalTodayStr();
-            const timeStr = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            const taskData = {
-                id: Math.random().toString(36).substring(2, 9),
-                title: `Atividade Extra (${timeStr})`,
-                type: 'once',
-                date: todayStr,
-                days: []
-            };
-            
-            state.tasks.push(taskData);
-            saveState();
-            showToast('Atividade Extra adicionada!');
-            switchTab('hoje', document.querySelector('.nav-btn'));
-        }
-
         function editTask(taskId) {
             const task = state.tasks.find(t => t.id === taskId);
             if(!task) return;
 
+            updateCategorySelect();
             document.getElementById('form-title').innerText = 'Editar Tarefa';
             document.getElementById('task-id').value = task.id;
             document.getElementById('task-title').value = task.title;
+            document.getElementById('task-emoji').value = task.emoji || '📌';
+            document.getElementById('task-category').value = task.categoryId || '';
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
 
             if (task.type === 'once') {
@@ -504,7 +723,7 @@
         function deleteTask(taskId) {
             state.tasks = state.tasks.filter(t => t.id !== taskId);
             delete state.completions[taskId];
-            state.trackedTasks = state.trackedTasks.map(slot => (slot && slot.id === taskId) ? null : slot);
+            state.trackedTasks = state.trackedTasks.map(slot => (slot && slot.targetType === 'task' && slot.id === taskId) ? null : slot);
 
             saveState();
             renderTracker();
@@ -522,18 +741,30 @@
                 let div = document.createElement('div');
                 
                 if (slot) {
-                    const task = state.tasks.find(t => t.id === slot.id);
-                    let title = task ? task.title : '??';
-                    let initials = title.substring(0, 2).toUpperCase();
+                    let displayBadge = '??';
+                    let subLabel = '';
+
+                    if (slot.targetType === 'category') {
+                        const cat = state.categories.find(c => c.id === slot.id);
+                        displayBadge = cat ? cat.emoji : '📁';
+                        subLabel = cat ? cat.name.substring(0, 6) : 'Cat';
+                    } else {
+                        const task = state.tasks.find(t => t.id === slot.id);
+                        displayBadge = task && task.emoji ? task.emoji : (task ? task.title.substring(0, 2).toUpperCase() : '??');
+                        subLabel = task ? task.title.substring(0, 6) : '';
+                    }
                     
-                    let bgClass = 'bg-red-500';
-                    if (slot.level === 2) bgClass = 'bg-yellow-400 text-slate-900'; 
-                    else if (slot.level === 3) bgClass = 'bg-green-500';
+                    // Níveis 1 a 4: 1=Vermelho, 2=Laranja, 3=Amarelo, 4=Verde
+                    let bgClass = 'bg-red-500 text-white';
+                    if (slot.level === 2) bgClass = 'bg-orange-500 text-white';
+                    else if (slot.level === 3) bgClass = 'bg-yellow-400 text-slate-900';
+                    else if (slot.level >= 4) bgClass = 'bg-emerald-500 text-white';
 
-                    if(slot.level !== 2) bgClass += ' text-white';
-
-                    div.className = `w-[18%] aspect-square rounded-2xl flex items-center justify-center font-bold text-xl shadow-md ${bgClass} transition-transform active:scale-95 cursor-pointer`;
-                    div.innerText = initials;
+                    div.className = `w-[18%] aspect-square rounded-2xl flex flex-col items-center justify-center font-bold shadow-md ${bgClass} transition-transform active:scale-95 cursor-pointer p-1`;
+                    div.innerHTML = `
+                        <span class="text-xl leading-none">${displayBadge}</span>
+                        <span class="text-[9px] font-bold uppercase tracking-tighter mt-1 opacity-90 truncate max-w-full">${subLabel}</span>
+                    `;
                     div.onclick = () => openRemoveTrackModal(index);
                 } else {
                     div.className = `w-[18%] aspect-square rounded-2xl flex items-center justify-center bg-slate-200 dark:bg-slate-800 text-slate-400 border-2 border-dashed border-slate-300 dark:border-slate-700 opacity-80 transition-transform active:scale-95 cursor-pointer`;
@@ -546,30 +777,80 @@
 
         function openAddTrackModal(slotIndex) {
             document.getElementById('pending-slot-index').value = slotIndex;
-            const list = document.getElementById('track-task-list');
-            list.innerHTML = '';
-            
-            const currentlyTrackedIds = state.trackedTasks.filter(s => s !== null).map(s => s.id);
-            const availableTasks = state.tasks.filter(t => !currentlyTrackedIds.includes(t.id));
-
-            if(availableTasks.length === 0) {
-                list.innerHTML = `<p class="text-sm text-center py-4 text-slate-500">Nenhuma tarefa disponível.</p>`;
-            } else {
-                availableTasks.forEach(t => {
-                    const btn = document.createElement('button');
-                    btn.className = "w-full text-left p-3 rounded-lg bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition border border-slate-200 dark:border-slate-700 shadow-sm";
-                    btn.innerHTML = `<div class="font-bold text-sm">${t.title}</div><div class="text-xs text-slate-500">${t.type === 'once' ? 'Única' : 'Rotina'}</div>`;
-                    btn.onclick = () => confirmAddTrack(t.id, slotIndex);
-                    list.appendChild(btn);
-                });
-            }
-
+            switchTrackModalTab('task');
             document.getElementById('modal-add-track').classList.add('active');
         }
 
-        function confirmAddTrack(taskId, slotIndex) {
+        function switchTrackModalTab(tabType) {
+            currentTrackModalTab = tabType;
+            const slotIndex = parseInt(document.getElementById('pending-slot-index').value);
+            const btnTask = document.getElementById('track-tab-task');
+            const btnCat = document.getElementById('track-tab-category');
+            const list = document.getElementById('track-task-list');
+            list.innerHTML = '';
+
+            if (tabType === 'task') {
+                btnTask.className = 'flex-1 py-2 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition';
+                btnCat.className = 'flex-1 py-2 rounded-lg text-xs font-bold text-slate-500 dark:text-slate-400 transition';
+
+                const trackedTaskIds = state.trackedTasks
+                    .filter(s => s !== null && s.targetType === 'task')
+                    .map(s => s.id);
+                const availableTasks = state.tasks.filter(t => !trackedTaskIds.includes(t.id));
+
+                if (availableTasks.length === 0) {
+                    list.innerHTML = `<p class="text-sm text-center py-4 text-slate-500">Nenhuma tarefa disponível.</p>`;
+                } else {
+                    availableTasks.forEach(t => {
+                        const cat = state.categories.find(c => c.id === t.categoryId);
+                        const catBadge = cat ? ` • ${cat.emoji} ${cat.name}` : '';
+                        const btn = document.createElement('button');
+                        btn.className = "w-full text-left p-3 rounded-lg bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-3";
+                        btn.innerHTML = `
+                            <span class="text-2xl">${t.emoji || '📌'}</span>
+                            <div>
+                                <div class="font-bold text-sm">${t.title}</div>
+                                <div class="text-xs text-slate-500">${t.type === 'once' ? 'Única' : 'Rotina'}${catBadge}</div>
+                            </div>
+                        `;
+                        btn.onclick = () => confirmAddTrack('task', t.id, slotIndex);
+                        list.appendChild(btn);
+                    });
+                }
+            } else {
+                btnCat.className = 'flex-1 py-2 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition';
+                btnTask.className = 'flex-1 py-2 rounded-lg text-xs font-bold text-slate-500 dark:text-slate-400 transition';
+
+                const trackedCatIds = state.trackedTasks
+                    .filter(s => s !== null && s.targetType === 'category')
+                    .map(s => s.id);
+                const availableCats = state.categories.filter(c => !trackedCatIds.includes(c.id));
+
+                if (availableCats.length === 0) {
+                    list.innerHTML = `<p class="text-sm text-center py-4 text-slate-500">Nenhuma categoria disponível. Crie em Ajustes.</p>`;
+                } else {
+                    availableCats.forEach(c => {
+                        const tasksCount = state.tasks.filter(t => t.categoryId === c.id).length;
+                        const btn = document.createElement('button');
+                        btn.className = "w-full text-left p-3 rounded-lg bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-900 dark:text-white transition border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-3";
+                        btn.innerHTML = `
+                            <span class="text-2xl">${c.emoji}</span>
+                            <div>
+                                <div class="font-bold text-sm">${c.name}</div>
+                                <div class="text-xs text-slate-500">Categoria • ${tasksCount} tarefa(s)</div>
+                            </div>
+                        `;
+                        btn.onclick = () => confirmAddTrack('category', c.id, slotIndex);
+                        list.appendChild(btn);
+                    });
+                }
+            }
+        }
+
+        function confirmAddTrack(targetType, targetId, slotIndex) {
             state.trackedTasks[slotIndex] = {
-                id: taskId,
+                targetType: targetType,
+                id: targetId,
                 level: 1, 
                 lastCheck: getLocalTodayStr()
             };
@@ -577,10 +858,18 @@
             renderTracker();
             renderTodayTasks();
             closeModals();
-            showToast('Monitoramento ativo!');
+            showToast(targetType === 'category' ? 'Categoria monitorada!' : 'Tarefa monitorada!');
         }
 
         function openRemoveTrackModal(slotIndex) {
+            const slot = state.trackedTasks[slotIndex];
+            const desc = document.getElementById('remove-track-desc');
+            if (slot && slot.targetType === 'category') {
+                const cat = state.categories.find(c => c.id === slot.id);
+                desc.innerText = `A categoria "${cat ? cat.name : ''}" deixará de ser monitorada neste quadrado, mas suas tarefas continuam salvas.`;
+            } else {
+                desc.innerText = 'Esta tarefa não será mais monitorada aqui, mas seu histórico não será apagado das tarefas gerais.';
+            }
             document.getElementById('remove-slot-index').value = slotIndex;
             document.getElementById('modal-remove-track').classList.add('active');
         }
@@ -612,7 +901,10 @@
                 if (isScheduledForDateStr(task, todayStr)) {
                     count++;
                     const status = state.completions[task.id] ? state.completions[task.id][todayStr] : undefined;
-                    const isTracked = state.trackedTasks.some(slot => slot && slot.id === task.id);
+                    const isTracked = state.trackedTasks.some(slot => 
+                        slot && ((slot.targetType === 'task' && slot.id === task.id) || (slot.targetType === 'category' && task.categoryId && slot.id === task.categoryId))
+                    );
+                    const category = state.categories.find(c => c.id === task.categoryId);
                     
                     const el = document.createElement('div');
                     el.className = `bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl shadow-sm ${status ? 'opacity-70' : ''}`;
@@ -629,7 +921,6 @@
                         const icon = isDone ? 'fa-check-circle text-green-500' : 'fa-times-circle text-red-500';
                         const text = isDone ? 'Finalizada' : 'Falhou';
                         const textColor = isDone ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
-                        const lineThroughClass = isDone ? 'line-through text-slate-500' : 'text-slate-900 dark:text-white';
                         
                         statusHtml = `
                         <div class="w-full text-right mt-2 bg-slate-50 dark:bg-slate-900/50 rounded p-2 text-center border border-slate-100 dark:border-slate-700">
@@ -639,7 +930,7 @@
                         </div>`;
 
                         setTimeout(() => {
-                            const tHeader = el.querySelector('h4 span');
+                            const tHeader = el.querySelector('h4 span.task-title-text');
                             if(tHeader && isDone) {
                                 tHeader.classList.add('line-through', 'text-slate-400', 'dark:text-slate-500');
                                 tHeader.classList.remove('text-slate-900', 'dark:text-white');
@@ -647,14 +938,22 @@
                         }, 0);
                     }
 
-                    const trackBadge = isTracked ? `<i class="fas fa-bolt text-yellow-500 text-xs ml-2" title="Monitorada"></i>` : '';
+                    const trackBadge = isTracked ? `<i class="fas fa-bolt text-yellow-500 text-xs ml-1.5" title="Monitorada"></i>` : '';
+                    const categoryTag = category 
+                        ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">${category.emoji} ${category.name}</span>` 
+                        : '';
 
                     el.innerHTML = `
                         <div>
-                            <h4 class="font-bold text-lg text-slate-900 dark:text-white transition-colors duration-300 flex items-center gap-1">
-                                <span>${task.title}</span> ${trackBadge}
+                            <h4 class="font-bold text-lg text-slate-900 dark:text-white transition-colors duration-300 flex items-center gap-2">
+                                <span class="text-xl">${task.emoji || '📌'}</span>
+                                <span class="task-title-text">${task.title}</span>
+                                ${trackBadge}
                             </h4>
-                            <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mt-1">${task.type === 'once' ? 'Atividade Hoje' : 'Rotina'}</p>
+                            <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                                <p class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">${task.type === 'once' ? 'Atividade Hoje' : 'Rotina'}</p>
+                                ${categoryTag}
+                            </div>
                         </div>
                         ${statusHtml}
                     `;
@@ -685,16 +984,25 @@
                     `Data: ${task.date.split('-').reverse().join('/')}` : 
                     `Repete: ${task.days.map(d => daysOfWeek[d]).join(', ')}`;
 
+                const category = state.categories.find(c => c.id === task.categoryId);
+                const categoryTag = category 
+                    ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 mt-1">${category.emoji} ${category.name}</span>` 
+                    : '';
+
                 const el = document.createElement('div');
-                el.className = 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl shadow-sm flex items-center justify-between';
+                el.className = 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-xl shadow-sm flex items-center justify-between gap-2';
                 el.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-slate-900 dark:text-white flex items-center">${task.title}</h4>
-                        <div class="flex items-center mt-1">
+                    <div class="min-w-0 flex-1">
+                        <h4 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 truncate">
+                            <span class="text-lg shrink-0">${task.emoji || '📌'}</span>
+                            <span class="truncate">${task.title}</span>
+                        </h4>
+                        <div class="flex flex-wrap items-center gap-2 mt-1">
                             <p class="text-xs text-slate-500 dark:text-slate-400">${subtitle}</p>
                         </div>
+                        ${categoryTag}
                     </div>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 shrink-0">
                         <button onclick="editTask('${task.id}')" class="w-10 h-10 rounded-full bg-blue-50 dark:bg-slate-700 text-blue-600 flex items-center justify-center active:scale-90 transition">
                             <i class="fas fa-pen text-sm"></i>
                         </button>
@@ -722,17 +1030,23 @@
             btnElement.classList.remove('text-slate-400', 'dark:text-slate-500');
             
             if(tabId === 'hoje') { renderTracker(); renderTodayTasks(); }
-            if(tabId === 'cadastrar') renderAllTasks();
+            if(tabId === 'cadastrar') { updateCategorySelect(); renderAllTasks(); }
+            if(tabId === 'ajustes') { renderCategories(); }
         }
 
         function toggleTaskType() {
-            const type = document.querySelector('input[name="task-type"]:checked').value;
+            const typeInput = document.querySelector('input[name="task-type"]:checked');
+            if (!typeInput) return;
+            const type = typeInput.value;
+            const dateContainer = document.getElementById('date-picker-container');
+            const daysContainer = document.getElementById('days-picker-container');
+
             if (type === 'once') {
-                document.getElementById('date-picker-container').classList.remove('hidden');
-                document.getElementById('days-picker-container').classList.add('hidden');
+                dateContainer.classList.remove('hidden');
+                daysContainer.classList.add('hidden');
             } else {
-                document.getElementById('date-picker-container').classList.add('hidden');
-                document.getElementById('days-picker-container').classList.remove('hidden');
+                dateContainer.classList.add('hidden');
+                daysContainer.classList.remove('hidden');
             }
         }
 
@@ -740,6 +1054,8 @@
             document.getElementById('form-title').innerText = 'Nova Tarefa';
             document.getElementById('task-id').value = '';
             document.getElementById('task-title').value = '';
+            document.getElementById('task-emoji').value = '📌';
+            document.getElementById('task-category').value = '';
             document.querySelector('input[value="once"]').checked = true;
             document.getElementById('task-date').value = getLocalTodayStr();
             document.querySelectorAll('.day-checkbox').forEach(cb => cb.checked = false);
@@ -749,28 +1065,29 @@
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
-            document.getElementById('toast-msg').innerText = msg;
+            const toastMsg = document.getElementById('toast-msg');
+            if (!toast || !toastMsg) return;
+            toastMsg.innerText = msg;
             toast.classList.add('show-toast');
-            setTimeout(() => toast.classList.remove('show-toast'), 3000);
+            setTimeout(() => {
+                toast.classList.remove('show-toast');
+            }, 3000);
         }
 
-        /* ================= CONFIGURAÇÕES E STORAGE ================= */
+        /* ================= TEMA E RESET ================= */
         function applyTheme(theme) {
-            const root = document.documentElement;
-            const indicators = document.querySelectorAll('#theme-icon-indicator, #theme-icon-btn');
-            
+            const htmlEl = document.documentElement;
+            const indicatorIcon = document.getElementById('theme-icon-indicator');
+            const btnIcon = document.getElementById('theme-icon-btn');
+
             if (theme === 'dark') {
-                root.classList.add('dark');
-                indicators.forEach(i => {
-                    i.classList.remove('fa-moon', 'text-slate-700');
-                    i.classList.add('fa-sun', 'text-yellow-400');
-                });
+                htmlEl.classList.add('dark');
+                if (indicatorIcon) indicatorIcon.className = 'fas fa-moon';
+                if (btnIcon) btnIcon.className = 'fas fa-moon text-yellow-400';
             } else {
-                root.classList.remove('dark');
-                indicators.forEach(i => {
-                    i.classList.remove('fa-sun', 'text-yellow-400');
-                    i.classList.add('fa-moon', 'text-slate-700');
-                });
+                htmlEl.classList.remove('dark');
+                if (indicatorIcon) indicatorIcon.className = 'fas fa-sun text-amber-500';
+                if (btnIcon) btnIcon.className = 'fas fa-sun text-amber-500';
             }
         }
 
@@ -786,15 +1103,23 @@
 
         function executeReset() {
             localStorage.removeItem('tasks');
+            localStorage.removeItem('categories');
             localStorage.removeItem('completions');
+            localStorage.removeItem('missedTasks');
             localStorage.removeItem('trackedTasks');
+            localStorage.removeItem('lastCheckDate');
             location.reload();
         }
 
         function saveState() {
             localStorage.setItem('tasks', JSON.stringify(state.tasks));
+            localStorage.setItem('categories', JSON.stringify(state.categories));
             localStorage.setItem('completions', JSON.stringify(state.completions));
+            localStorage.setItem('missedTasks', JSON.stringify(state.missedTasks));
             localStorage.setItem('trackedTasks', JSON.stringify(state.trackedTasks));
+            if (state.lastCheckDate) {
+                localStorage.setItem('lastCheckDate', state.lastCheckDate);
+            }
             localStorage.setItem('theme', state.theme);
         }
 
